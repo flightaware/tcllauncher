@@ -11,29 +11,30 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: tclAppInit.c,v 1.1.1.1 2007-10-14 06:20:42 karl Exp $
+ * RCS: @(#) $Id: tclAppInit.c,v 1.2 2007-10-14 06:49:20 karl Exp $
  */
 
 #include "tcl.h"
 
-#ifdef TCL_TEST
+#define TCL_LOCAL_MAIN_HOOK launcher_main_hook
 
-#include "tclInt.h"
+int launcher_main_hook _ANSI_ARGS_((int *argcPtr, char ***argvPtr)) {
+    char **newArgv;
+    int    newArgc = *argcPtr + 1;
+    int    i;
 
-extern int		Procbodytest_Init _ANSI_ARGS_((Tcl_Interp *interp));
-extern int		Procbodytest_SafeInit _ANSI_ARGS_((Tcl_Interp *interp));
-extern int		TclObjTest_Init _ANSI_ARGS_((Tcl_Interp *interp));
-extern int		Tcltest_Init _ANSI_ARGS_((Tcl_Interp *interp));
-#ifdef TCL_THREADS
-extern int		TclThread_Init _ANSI_ARGS_((Tcl_Interp *interp));
-#endif
+    newArgv = (char **)ckalloc (sizeof(char *) * newArgc);
+    newArgv[0] = *argvPtr[0];
+    newArgv[1] = "goofy.tcl";
 
-#endif /* TCL_TEST */
+    for (i = 2; i < newArgc; i++) {
+        newArgv[i] = *argvPtr[i - 1];
+    }
 
-#ifdef TCL_XT_TEST
-extern void		XtToolkitInitialize _ANSI_ARGS_((void));
-extern int		Tclxttest_Init _ANSI_ARGS_((Tcl_Interp *interp));
-#endif
+    *argvPtr = newArgv;
+    *argcPtr = newArgc;
+}
+
 
 /*
  *----------------------------------------------------------------------
@@ -79,10 +80,6 @@ main(argc, argv)
     extern int TCL_LOCAL_MAIN_HOOK _ANSI_ARGS_((int *argc, char ***argv));
 #endif
 
-#ifdef TCL_XT_TEST
-    XtToolkitInitialize();
-#endif
-
 #ifdef TCL_LOCAL_MAIN_HOOK
     TCL_LOCAL_MAIN_HOOK(&argc, &argv);
 #endif
@@ -118,32 +115,6 @@ Tcl_AppInit(interp)
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
-
-#ifdef TCL_TEST
-#ifdef TCL_XT_TEST
-     if (Tclxttest_Init(interp) == TCL_ERROR) {
-	 return TCL_ERROR;
-     }
-#endif
-    if (Tcltest_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    Tcl_StaticPackage(interp, "Tcltest", Tcltest_Init,
-            (Tcl_PackageInitProc *) NULL);
-    if (TclObjTest_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#ifdef TCL_THREADS
-    if (TclThread_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
-    if (Procbodytest_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    Tcl_StaticPackage(interp, "procbodytest", Procbodytest_Init,
-            Procbodytest_SafeInit);
-#endif /* TCL_TEST */
 
     /*
      * Call the init procedures for included packages.  Each call should
