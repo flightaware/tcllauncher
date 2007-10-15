@@ -15,9 +15,9 @@
 /*
  *----------------------------------------------------------------------
  *
- * Launcher_Init --
+ * Tcllauncher_Init --
  *
- *	Initialize the new package.  The string "Launcher" in the
+ *	Initialize the new package.  The string "Tcllauncher" in the
  *	function name must match the PACKAGE declaration at the top of
  *	configure.in.
  *
@@ -30,7 +30,7 @@
  */
 
 int
-Launcher_Init(Tcl_Interp *interp)
+Tcllauncher_Init(Tcl_Interp *interp)
 {
     /*
      * This may work with 8.0, but we are using strictly stubs here,

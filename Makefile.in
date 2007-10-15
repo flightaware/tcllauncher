@@ -12,7 +12,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# RCS: @(#) $Id: Makefile.in,v 1.1.1.1 2007-10-14 06:20:41 karl Exp $
+# RCS: @(#) $Id: Makefile.in,v 1.2 2007-10-15 02:15:29 karl Exp $
 
 #========================================================================
 # Add additional lines to handle any additional AC_SUBST cases that
@@ -63,7 +63,7 @@ PKG_LIB_FILE	= @PKG_LIB_FILE@
 PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 
 lib_BINARIES	= $(PKG_LIB_FILE)
-BINARIES	= $(lib_BINARIES) ktclsh
+BINARIES	= $(lib_BINARIES) tcllauncher
 
 SHELL		= @SHELL@
 
@@ -444,8 +444,8 @@ tclAppInit.o:	unix/tclAppInit.c
 
 TCLSH_OBJS = tclAppInit.o
 
-ktclsh:	${TCLSH_OBJS} ${TCL_LIB_FILE}
+tcllauncher:	${TCLSH_OBJS} ${TCL_LIB_FILE}
 	${CC} ${CFLAGS} ${LDFLAGS} ${TCLSH_OBJS} ${LIBS} \
-	${CC_SEARCH_FLAGS} ${TCL_LIB_SPEC} -o ktclsh
+	${CC_SEARCH_FLAGS} ${TCL_LIB_SPEC} -o tcllauncher
 
 

@@ -1,10 +1,4 @@
-This is a sample extension showing an implementation of the Tcl Extension
-Architecture (TEA).  Please see the webpage
-
-	http://www.tcl.tk/doc/tea/
-
-for more details on TEA.  You can also read the enclosed "tea.pdf" document
-for instructions on how to adapt this sample extension to your extension.
+This is tcllauncher, a launcher program for Tcl applications.
 
 This package is a freely available open source package.  You can do
 virtually anything you like with it, such as modifying it, redistributing
@@ -21,8 +15,6 @@ Makefile.in	Makefile template.  The configure script uses this file to
 
 README		This file
 
-README.sha	A description of the extension itself.
-
 aclocal.m4	Generated file.  Do not edit.  Autoconf uses this as input
 		when generating the final configure script.  See "tcl.m4"
 		below.
@@ -36,16 +28,14 @@ configure.in	Configure script template.  Autoconf uses this file as input
 pkgIndex.tcl.in Package index template.  The configure script will use
 		this file as input to create pkgIndex.tcl.
 
-sample.c	Core Secure Hash Algorithm code.
+launcher.c	Nothing.
 
-sample.h	Header file for functions in the C files.
+launcher.h	Nothing.
 
-sha1.n		Unix nroff man page
+tcllauncher.c	Nothing.
 
-tclsample.c	Implementation of new Tcl command "sha1".
-
-tea.pdf		PDF file describing the current implementation of the
-		Tcl Extension Architecture
+tclAppInit.c	A slightly modified copy of TclAppInit.c from the Tcl
+                source code.
 
 tclconfig/	This directory contains various template files that build
 		the configure script.  They should not need modification.
@@ -64,7 +54,7 @@ and then run make. For more information about the build process, see
 the tcl/unix/README file in the Tcl src dist. The following minimal
 example will install the extension in the /opt/tcl directory.
 
-	$ cd sampleextension
+	$ cd tcllauncher
 	$ ./configure --prefix=/opt/tcl
 	$ make
 	$ make install
