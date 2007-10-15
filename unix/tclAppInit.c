@@ -11,7 +11,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: tclAppInit.c,v 1.3 2007-10-15 02:11:24 karl Exp $
+ * RCS: @(#) $Id: tclAppInit.c,v 1.4 2007-10-15 03:30:00 karl Exp $
  */
 
 #include "tcl.h"
@@ -43,7 +43,7 @@ int launcher_main_hook _ANSI_ARGS_((int *argcPtr, char ***argvPtr)) {
 
     newArgv = (char **)ckalloc (sizeof(char *) * newArgc);
     newArgv[0] = **argvPtr;
-    newArgv[1] = "goofy.tcl";
+    newArgv[1] = TCLLAUNCHER_FILE;
 
     for (i = 2; i < newArgc; i++) {
         newArgv[i] = *(*argvPtr + i - 1);
