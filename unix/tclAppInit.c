@@ -11,28 +11,48 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: tclAppInit.c,v 1.2 2007-10-14 06:49:20 karl Exp $
+ * RCS: @(#) $Id: tclAppInit.c,v 1.3 2007-10-15 02:11:24 karl Exp $
  */
 
 #include "tcl.h"
 
 #define TCL_LOCAL_MAIN_HOOK launcher_main_hook
 
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * launcher_main_hook --
+ *
+ *	This is the launcher's main hook that gets called just before
+ *      tcl_main.
+ *
+ * Results:
+ *	Rewrites the program's main's argv and argc to stuff a tcl
+ *      filename in as argv[1].
+ *
+ * Side effects:
+ *	Whatever the application does.
+ *
+ *----------------------------------------------------------------------
+ */
 int launcher_main_hook _ANSI_ARGS_((int *argcPtr, char ***argvPtr)) {
     char **newArgv;
     int    newArgc = *argcPtr + 1;
     int    i;
 
     newArgv = (char **)ckalloc (sizeof(char *) * newArgc);
-    newArgv[0] = *argvPtr[0];
+    newArgv[0] = **argvPtr;
     newArgv[1] = "goofy.tcl";
 
     for (i = 2; i < newArgc; i++) {
-        newArgv[i] = *argvPtr[i - 1];
+        newArgv[i] = *(*argvPtr + i - 1);
     }
 
     *argvPtr = newArgv;
     *argcPtr = newArgc;
+
+    return 0;
 }
 
 
