@@ -11,7 +11,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: tclAppInit.c,v 1.4 2007-10-15 03:30:00 karl Exp $
+ * RCS: @(#) $Id: tclAppInit.c,v 1.5 2007-11-24 06:30:10 karl Exp $
  */
 
 #include "tcl.h"
@@ -41,7 +41,7 @@ int launcher_main_hook _ANSI_ARGS_((int *argcPtr, char ***argvPtr)) {
     int    newArgc = *argcPtr + 1;
     int    i;
 
-    newArgv = (char **)ckalloc (sizeof(char *) * newArgc);
+    newArgv = (char **)malloc (sizeof(char *) * newArgc);
     newArgv[0] = **argvPtr;
     newArgv[1] = TCLLAUNCHER_FILE;
 
