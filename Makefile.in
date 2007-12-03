@@ -12,7 +12,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# RCS: @(#) $Id: Makefile.in,v 1.4 2007-11-24 06:30:10 karl Exp $
+# RCS: @(#) $Id: Makefile.in,v 1.5 2007-12-03 21:43:24 karl Exp $
 
 #========================================================================
 # Add additional lines to handle any additional AC_SUBST cases that
@@ -63,7 +63,8 @@ PKG_LIB_FILE	= @PKG_LIB_FILE@
 PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 
 lib_BINARIES	= $(PKG_LIB_FILE)
-BINARIES	= $(lib_BINARIES) tcllauncher
+bin_BINARIES	= tcllauncher
+BINARIES	= $(lib_BINARIES) $(bin_BINARIES)
 
 SHELL		= @SHELL@
 
