@@ -2,13 +2,20 @@
 # tcllauncher.tcl - tcl code that tcllauncher uses to do its thing
 #
 #
-# $Id: tcllauncher.tcl,v 1.3 2007-12-29 01:30:33 karl Exp $
+# $Id: tcllauncher.tcl,v 1.4 2007-12-29 01:54:01 karl Exp $
 #
 
 namespace eval ::tcllauncher {
 
 proc doit {{argv ""}} {
     set prog [info nameofexecutable]
+
+    # have we been invoked as a shell?  If so, prog is empty, get it from
+    # the SHELL environment variable
+    if {$prog == ""} {
+	set prog $::env(SHELL)
+    }
+
     set path [file split $prog]
     set shortName [lindex $path end]
 

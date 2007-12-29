@@ -1,4 +1,11 @@
-$Id: ChangeLog,v 1.4 2007-12-03 21:43:24 karl Exp $
+$Id: ChangeLog,v 1.5 2007-12-29 01:54:01 karl Exp $
+
+2007-12-28 karl
+    * When invoked as a shell, [info nameofexecutable] returns nothing.
+
+      Detect that condition and, if so, use the SHELL environment variable
+      to form the basis of what we do.  For instance, if the shell is 
+      /usr/local/bin/farsh, we'll run /usr/local/lib/farsh/main.tcl.
 
 2007-12-03 karl
     * Make sure tcllauncher gets installed into the bin directory.
