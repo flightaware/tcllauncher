@@ -2,7 +2,7 @@
 # tcllauncher.tcl - tcl code that tcllauncher uses to do its thing
 #
 #
-# $Id: tcllauncher.tcl,v 1.4 2007-12-29 01:54:01 karl Exp $
+# $Id: tcllauncher.tcl,v 1.5 2008-02-13 17:18:22 karl Exp $
 #
 
 namespace eval ::tcllauncher {
@@ -42,7 +42,9 @@ proc doit {{argv ""}} {
 	#set path [eval file join [lreplace $path end-1 end-1 lib tcllauncher]]
 
 	# this version looks for ../lib/$shortName/main.tcl
-        set path [eval file join [lreplace $path end-1 end lib $shortName main.tcl]]
+
+        set ::launchdir [eval file join [lreplace $path end-1 end lib $shortName]]
+        set path [eval file join $::launchdir main.tcl]
     } else {
         set path $prog.tcl
     }

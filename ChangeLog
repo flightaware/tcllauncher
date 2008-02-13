@@ -1,4 +1,11 @@
-$Id: ChangeLog,v 1.5 2007-12-29 01:54:01 karl Exp $
+$Id: ChangeLog,v 1.6 2008-02-13 17:18:22 karl Exp $
+
+2008-02-13 karl
+    * Create a global variable, launchdir, containing the directory that
+      the main.tcl is being run out of, if the path to the executable
+      is .../bin/programName, else set that variable to "."  This provides
+      a way for programs to find other files they installed alongside
+      their main.tcl.
 
 2007-12-28 karl
     * When invoked as a shell, [info nameofexecutable] returns nothing.
