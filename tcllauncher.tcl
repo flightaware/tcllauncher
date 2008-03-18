@@ -2,7 +2,7 @@
 # tcllauncher.tcl - tcl code that tcllauncher uses to do its thing
 #
 #
-# $Id: tcllauncher.tcl,v 1.5 2008-02-13 17:18:22 karl Exp $
+# $Id: tcllauncher.tcl,v 1.6 2008-03-18 07:14:45 karl Exp $
 #
 
 namespace eval ::tcllauncher {
@@ -53,6 +53,8 @@ proc doit {{argv ""}} {
 	puts stderr "$shortName: can't read '$path' (tcllauncher)"
 	exit 254
     }
+
+    set ::argv0 $shortName
 
     # ok now source in the file we (tcllauncher) figured out is the one
 
