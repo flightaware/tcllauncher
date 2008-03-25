@@ -3,13 +3,13 @@
 #
 # Tcl-ized, TclX-ized, studied copy of FreeBSD's pidfile library
 #
-# $Id: pidfile.tcl,v 1.1 2008-03-25 06:12:10 karl Exp $
+# $Id: pidfile.tcl,v 1.2 2008-03-25 06:16:53 karl Exp $
 #
 
 package require Tclx
 
 #
-# pidfile_verify -
+# pidfile_verify - insane checks of pid file
 #
 proc pidfile_verify {} {
     variable pfh
@@ -29,7 +29,8 @@ proc pidfile_verify {} {
 }
 
 #
-# pidfile_read - 
+# pidfile_read - given a path and the name of a pid variable, set the
+#  PID into the variable
 #
 proc pidfile_read {path _pid} {
     variable pfh
@@ -44,7 +45,12 @@ proc pidfile_read {path _pid} {
 }
 
 #
-# pidfile_open -
+# pidfile_open - given an optional path to a directory and optional permissions,
+#  open the file, try to lock it, get its contents.  Return the pid contained
+#  therein if there is one and the lock failed.  (Somebody's already got the
+#  pid.)
+#
+#  else you've got the lock and call pidfile_write to get your pid in there
 #
 proc pidfile_open {{path "/var/run"} {mode 0600}} {
     variable pfh
@@ -85,7 +91,7 @@ proc pidfile_open {{path "/var/run"} {mode 0600}} {
 }
 
 #
-# pidfile_write -
+# pidfile_write - write my pid into the pid file
 #
 proc pidfile_write {} {
     variable pfh
@@ -101,7 +107,7 @@ proc pidfile_write {} {
 }
 
 #
-# pidfile_close -
+# pidfile_close - close the pid file
 #
 proc pidfile_close {} {
     variable pfh
@@ -112,7 +118,7 @@ proc pidfile_close {} {
 }
 
 #
-# pidfile_remove -
+# pidfile_remove - remove the pidfile, unlock the lock, and close it
 #
 proc pidfile_remove {} {
     variable pfh
