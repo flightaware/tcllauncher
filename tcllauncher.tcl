@@ -2,7 +2,7 @@
 # tcllauncher.tcl - tcl code that tcllauncher uses to do its thing
 #
 #
-# $Id: tcllauncher.tcl,v 1.7 2008-03-25 22:19:27 karl Exp $
+# $Id: tcllauncher.tcl,v 1.8 2008-03-25 22:22:18 karl Exp $
 #
 
 namespace eval ::tcllauncher {
@@ -50,7 +50,7 @@ proc require_user {user} {
 #  user and group or if they're superuser or some kind of equivalent,
 #  force this process to have the specified user (uid) and group (gid)
 #
-require_user_and_group {user group} {
+proc require_user_and_group {user group} {
 
     # try group first because if we're root we might not be after setting
     # user
