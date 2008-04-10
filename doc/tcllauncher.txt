@@ -1,0 +1,94 @@
+
+
+$Id: tcllauncher.txt,v 1.1 2008-04-10 07:28:21 karl Exp $
+
+tcllauncher
+
+tcllauncher is a way to have Tcl programs run out of /usr/local/bin, or
+wherever.
+
+Now you might think, why bother?  I'll just put my script in there and
+do a #! thing to invoke Tcl.
+
+Well, OK, but this has certain problems:
+
+    o everything will show in "ps" as tclsh
+
+    o everything will show in "top" as tclsh
+
+You'd like to be able to have stuff show up as its script name.
+
+You could just copy or even link tclsh to the name of your program.
+Say, for instance, trackserver.
+
+But then you have to invoke trackserver with arguments and do stuff to
+prep it, like:
+
+    cd ...somewhere...
+    /usr/local/bin/trackserver main.tcl
+
+
+That's the original purpose for tcllauncher, just to make that reasonable.
+
+    ln /usr/local/bin/tcllauncher /usr/local/bin/trackserver
+
+    trackserver
+
+
+How does it find its files?  It cd's to the corresponding lib directory and
+a directory underneath that of the same name as the application, and sources
+main.tcl with tcl_interactive set to 0.
+
+run
+
+	trackserver
+
+what happens
+
+	/usr/local/bin/trackserver, a copy of /usr/local/bin/tcllauncher,
+	sources in /usr/local/lib/trackserver/main.tcl.
+
+Also, a global variable called launchdir is set containing the "launch
+directory."  In the above example, /usr/local/lib/trackserver.
+
+WHAT DIRECTORY
+
+Tcllauncher doesn't change your directory behind your back, so wherever you
+are at when you run it, you're still in that directory.
+
+But a lot of times you want to go to your application directory, so you
+can just 
+
+	cd $::launchdir
+
+Then you can source in all of your various files and stuff like that.
+
+PROCESS GROUP
+
+If you are going to fork off children, exec them, or whatever, you should
+probably become your own process group so hopefully your children might
+inherit your signals and Do The Right Thing.
+
+    package require Tclx
+    id process group set
+
+PID FILE
+
+Lots of apps write a file with the server's process ID in it.  Upon relaunch,
+the program can come along and look in its own pid file to see if it's already
+alive or not, and also to potentially kill it.
+
+We need this functionality.
+
+Something like
+
+	pidfile
+
+	pidfile app.pid
+
+	pidfile -kill app.pid
+
+Should tcllauncher have standard semantics for killing, like
+    apachectl graceful
+
+
