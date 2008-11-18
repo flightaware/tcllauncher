@@ -5,6 +5,7 @@ virtually anything you like with it, such as modifying it, redistributing
 it, and selling it either in whole or in part.  See the file
 "license.terms" for complete information.
 
+
 CONTENTS
 ========
 The following is a short description of the files you will find in
@@ -58,6 +59,19 @@ example will install the extension in the /opt/tcl directory.
 	$ ./configure --prefix=/opt/tcl
 	$ make
 	$ make install
+
+HINT
+====
+
+Beware it building against the source dirs instead of installed dirs and
+then not being able to find stuff.  If, for instace, you're building in
+/usr/fa, use something like
+
+./configure --prefix=/usr/fa --with-tcl=/usr/fa/lib 
+
+The --with-tcl is important!  Otherwise it will probably find the Tcl
+source in a parallel directory and build against that instead and
+cause problems later.
 
 WINDOWS BUILD
 =============

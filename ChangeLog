@@ -1,4 +1,7 @@
-$Id: ChangeLog,v 1.6 2008-02-13 17:18:22 karl Exp $
+$Id: ChangeLog,v 1.7 2008-11-18 21:48:24 karl Exp $
+
+2008-11-18 karl
+    * Upgrade to Tcl Extension Architecture (TEA) 3.7
 
 2008-02-13 karl
     * Create a global variable, launchdir, containing the directory that

@@ -1,7 +1,49 @@
+2008-11-04  Daniel Steffen  <das@users.sourceforge.net>
+
+	*** Bump to TEA_VERSION 3.7 ***
+
+	* tcl.m4 (Darwin): sync TEA_PRIVATE_TK_HEADERS handling of
+	Tk.framework PrivateHeaders with TEA_PRIVATE_TCL_HEADERS.
+
+2008-11-04  Jeff Hobbs  <jeffh@ActiveState.com>
+
+	* tcl.m4 (TEA_PATH_TCLCONFIG, TEA_PATH_TKCONFIG): exit with error
+	when tclConfig.sh cannot be found. [Bug #1997760]
+	(TEA_PRIVATE_TCL_HEADERS, TEA_PRIVATE_TK_HEADERS): allow for
+	finding the headers installed in the public areas, e.g. a result of
+	make install-private-headers. [Bug #1631922]
+
+2008-08-12  Daniel Steffen  <das@users.sourceforge.net>
+
+	* tcl.m4 (Darwin): link shlib with current and compatiblity version
+	flags; look for libX11.dylib when searching for X11 libraries.
+
+2008-06-12  Daniel Steffen  <das@users.sourceforge.net>
+
+	* tcl.m4 (SunOS-5.11): fix 64bit amd64 support with gcc & Sun cc.
+
+2008-03-27  Daniel Steffen  <das@users.sourceforge.net>
+
+	* tcl.m4 (SunOS-5.1x): fix 64bit support for Sun cc. [Bug 1921166]
+
+2008-02-01  Donal K. Fellows  <donal.k.fellows@man.ac.uk>
+
+	* tcl.m4 (TEA_CONFIG_CFLAGS): Updated to work at least in part with
+	more modern VC versions. Currently just made the linker flags more
+	flexible; more work may be needed.
+
+2007-10-26  Daniel Steffen  <das@users.sourceforge.net>
+
+	* tcl.m4 (Darwin): add support for 64-bit X11.
+
+2007-10-23  Jeff Hobbs  <jeffh@ActiveState.com>
+
+	*** Tagged tea-3-branch to start TEA 4 development on HEAD ***
+
 2007-09-17  Joe English  <jenglish@users.sourceforge.net>
 
 	* tcl.m4: use '${CC} -shared' instead of 'ld -Bshareable' 
-	to build shared libraries on current NetBSDs [#1749251].
+	to build shared libraries on current NetBSDs [Bug 1749251].
 
 2007-09-15  Daniel Steffen  <das@users.sourceforge.net>
 
