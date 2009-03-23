@@ -92,3 +92,43 @@ Should tcllauncher have standard semantics for killing, like
     apachectl graceful
 
 
+DAEMONIZE
+
+Sometimes you want your program to spawn itself off into the background in
+a way that when you logout it doesn't kill the process, etc.
+
+To daemonize a tcllauncher app,
+
+    daemon
+
+By default this forks off a child and exits the parent.  In the child, it
+changes the current directory to /, and redirects stdin, stdout and stderr 
+to/from /dev/null.
+
+Optional arguments are -noclose, which prevents the closing and redirecting
+of stdin, stdout and stderr, and -nochdir, which prevents the changing of
+the working dir to /.
+
+This is a rough copy of BSD 4.4's daemon library routine.
+
+USER AND GROUP ID MANAGEMENT
+
+If a program needs to be run as a certain use, it can invoke
+
+::tcllauncher::require_user fred
+
+This requires the program to either be run as fred or as root or something
+like that, a user that has permissions to become fred.
+
+If the program is running as user fred or can change the user id (suid) to
+fred, it continues, else it aborts.
+
+::tcllauncher::require_group does for groups what require_user does for
+users.
+
+Note that if you require user first then require group, the process may have
+lost the privileges necessary to change groups after changing users.  Either
+require the group ID first or use ::tcllauncher::require_user_and_group
+to do both.
+
+
