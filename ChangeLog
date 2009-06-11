@@ -1,5 +1,12 @@
 $Id: ChangeLog,v 1.7 2008-11-18 21:48:24 karl Exp $
 
+2009-06-11 karl
+    * Deploy pidfile_* and daemonize functions.
+
+    * Document pidfile functions.
+
+    * Version bump to 1.1
+
 2009-03-31 karl
     * Builds cleanly on Debian.  Added README.Debin with configure instructions.
 

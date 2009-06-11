@@ -16,6 +16,9 @@ Well, OK, but this has certain problems:
 
     o everything will show in "top" as tclsh
 
+    o if there are any files you want to pull in that aren't in a package,
+      you have to invent your own place to install and locate them.
+
 You'd like to be able to have stuff show up as its script name.
 
 You could just copy or even link tclsh to the name of your program.
@@ -30,7 +33,7 @@ prep it, like:
 
 That's the original purpose for tcllauncher, just to make that reasonable.
 
-    ln /usr/local/bin/tcllauncher /usr/local/bin/trackserver
+    cp /usr/local/bin/tcllauncher /usr/local/bin/trackserver
 
     trackserver
 
@@ -78,18 +81,52 @@ Lots of apps write a file with the server's process ID in it.  Upon relaunch,
 the program can come along and look in its own pid file to see if it's already
 alive or not, and also to potentially kill it.
 
-We need this functionality.
+Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
 
-Something like
+::tcllauncher::pidfile_open 
 
-	pidfile
+    Given an optional path to a directory and optional permissions, 
+    pidfile_open opens (or creates) a file specified by the path
+    and locks it with TclX's interface to the flock system call.
 
-	pidfile app.pid
+    If the file cannot be locked, the PID of an already running daemon is
+    returned.
 
-	pidfile -kill app.pid
+    Otherwise zero is returned and you've got the lock. You can now call 
+    pidfile_write to get your pid into the lock file.
 
-Should tcllauncher have standard semantics for killing, like
-    apachectl graceful
+    This function does not write your process' PID into the file,
+    so it can be used before forking if needed.
+
+::tcllauncher::pidfile_write
+
+    Writes your pid into the pid file previously opened by pidfile_open.
+
+::tcllauncher::pidfile_close 
+
+    Close a pidfile.  It should be used after your daemon forks to start
+    a child process.
+
+::tcllauncher::pidfile_remove
+
+	Close and remove a pidfile.
+
+EXAMPLE
+
+    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid 0600]
+    if {$pid > 0} {
+	puts stderr "pid $pid already has the lock"
+	exit 1
+    }
+
+    ::tcllauncher::daemonize
+
+    ::tcllauncher::pidfile_write
+
+    ...do work...
+
+    ::tcllauncher::pidfile_remove
+    exit
 
 
 DAEMONIZE
@@ -99,7 +136,7 @@ a way that when you logout it doesn't kill the process, etc.
 
 To daemonize a tcllauncher app,
 
-    daemon
+    ::tcllauncher::daemonize
 
 By default this forks off a child and exits the parent.  In the child, it
 changes the current directory to /, and redirects stdin, stdout and stderr 
@@ -108,6 +145,8 @@ to/from /dev/null.
 Optional arguments are -noclose, which prevents the closing and redirecting
 of stdin, stdout and stderr, and -nochdir, which prevents the changing of
 the working dir to /.
+
+    ::tcllauncher::daemonize -nochdir
 
 This is a rough copy of BSD 4.4's daemon library routine.
 
