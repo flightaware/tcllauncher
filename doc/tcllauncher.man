@@ -1,6 +1,6 @@
 [manpage_begin tcllauncher n 1.1]
-[moddesc   {package for launching bundled Tcl applications on a server}]
-[copyright {2007-2009 FlightAware LLC}]
+[moddesc   {Tcl application launcher for servers}]
+[copyright {2007-2009 FlightAware LLC (BSD Liscense)}]
 [titledesc {Tcl application launcher}]
 [category  {app launcher}]
 [description]
@@ -19,7 +19,7 @@ do a #! thing to invoke Tcl.
 [para]
 
 Well, OK, but this has certain problems:
-[list_begin]
+[list_begin item]
 [item] All your Tcl programs will show in "ps" as tclsh
 [item] All your Tcl programs will show in "top" as tclsh
 [item] if there are any files you want to pull in that aren't in a package,
@@ -106,6 +106,7 @@ Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
 
 [para]
 
+[list_begin definitions]
 [call [cmd ::tcllauncher::pidfile_open] \
         [opt "[arg path]"] \
         [opt "[arg mode]"]]
@@ -144,10 +145,11 @@ a child process.
 
 Close and remove a pidfile.
 
+[list_end]
 [section {EXAMPLE}]
 
 [example_begin]
-    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid 0600]
+    set pid [lb]::tcllauncher::pidfile_open "/var/run/daemon.pid 0600[rb]
     if {$pid > 0} {
 	puts stderr "pid $pid already has the lock"
 	exit 1
@@ -170,6 +172,7 @@ a way that when you logout it doesn't kill the process, etc.
 
 To daemonize a tcllauncher app,
 
+[list_begin definitions]
 [call [cmd ::tcllauncher::daemonize] \
         [opt "[arg -noclose]"] \
         [opt "[arg -nochdir]"]]
@@ -185,11 +188,13 @@ dir to [file /]
 
 [para]
 This is a rough copy of BSD 4.4's [cmd daemon] library routine.
+[list_end]
 
 [section {USER AND GROUP ID MANAGEMENT}]
 
 If a program needs to be run as a certain use, it can invoke
 
+[list_begin definitions]
 [call [cmd ::tcllauncher::require_user] \
     [arg userName]]
 
@@ -205,9 +210,16 @@ fred, it continues, else it aborts.
 
 This means if the superuser invokes the program, it will change user to the correct user.  If the correct user invokes the program, it will correctly do nothing and proceed.  Handy.
 
-[def ::tcllauncher::require_group] does for groups what require_user does for
+[call [cmd ::tcllauncher::require_group] \
+    [arg groupName]] does for groups what require_user does for
 users.
 
+[call [cmd ::tcllauncher::require_user_and_group] \
+    [arg userName] \
+    [arg groupName]] 
+combines changing the group and user into a single procedure.
+
+[list_end]
 [para]
 
 Note that if you require user first then require group, the process may have
