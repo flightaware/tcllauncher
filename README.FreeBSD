@@ -2,4 +2,4 @@
 # configure arguments for FreeBSD machines with standard, ports-installed tcl85
 #
 
-./configure --with-tcl=/usr/local/lib/tcl8.5 --with-tclinclude=/usr/local/include/tcl8.5
+./configure --with-tcl=/usr/local/lib/tcl8.5
