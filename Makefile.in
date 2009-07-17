@@ -75,7 +75,7 @@ exec_prefix	= @exec_prefix@
 bindir		= @bindir@
 libdir		= @libdir@
 includedir	= @includedir@
-datarootdir     = @datarootdir@
+#datarootdir     = @datarootdir@
 datadir		= @datadir@
 mandir		= @mandir@
 
@@ -198,11 +198,21 @@ libraries:
 # end user machine when building from source.
 #========================================================================
 
-doc:
-	@echo "If you have documentation to create, place the commands to"
-	@echo "build the docs in the 'doc:' target.  For example:"
-	@echo "        xml2nroff sample.xml > sample.n"
-	@echo "        xml2html sample.xml > sample.html"
+DTPLITE=@DTPLITE@
+
+doc:	$(srcdir)/doc/tcllauncher.n
+
+$(srcdir)/doc/tcllauncher.n:	$(srcdir)/doc/tcllauncher.man
+	@if [ -n "$(DTPLITE)" -a -x "$(DTPLITE)" ]; then \
+	    echo "Building $@"; \
+	    $(DTPLITE) -o $@ nroff $(srcdir)/doc/tcllauncher.man ; \
+	fi
+
+tcllauncher.html:	$(srcdir)/doc/tcllauncher.man
+	@if [ -n "$(DTPLITE)" -a -x "$(DTPLITE)" ]; then \
+	    echo "Building $@"; \
+	    $(DTPLITE) -o $@ html $(srcdir)/doc/hdp.man ; \
+	fi
 
 install: all install-binaries install-libraries install-doc
 

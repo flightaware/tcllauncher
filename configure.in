@@ -182,6 +182,12 @@ TEA_MAKE_LIB
 TEA_PROG_TCLSH
 #TEA_PROG_WISH
 
+# -------------------------------------------------------------------
+# Find a usable dtplite (from tcllib) to use in document generation.
+# -------------------------------------------------------------------
+
+TEA_PROG_DTPLITE
+
 # TCLLAUNCHER needs some stuff since it makes a tclsh-like executable
 # that isn't normally substituted.  Make configure substitute that stuff
 # too!

@@ -7,3 +7,4 @@ pkgIndex.tcl
 *.o
 *.so
 tcllauncher
+doc/tcllauncher.n

@@ -2,7 +2,6 @@
 [moddesc   {Tcl application launcher for servers}]
 [copyright {2007-2009 FlightAware LLC (BSD Liscense)}]
 [titledesc {Tcl application launcher}]
-[category  {app launcher}]
 [description]
 [para]
 
