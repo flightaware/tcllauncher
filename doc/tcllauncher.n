@@ -1,0 +1,198 @@
+'\"
+'\" Generated from file './doc/tcllauncher.man' by tcllib/doctools with format 'nroff'
+'\" Copyright (c) 2007-2009 FlightAware LLC (BSD Liscense)
+'\"
+.so man.macros
+.TH "tcllauncher" n 1.1 tcllauncher "Tcl application launcher for servers"
+.BS
+.SH NAME
+tcllauncher \- Tcl application launcher
+.SH SYNOPSIS
+\fB::tcllauncher::pidfile_open\fR ?\fIpath\fR? ?\fImode\fR?
+.sp
+\fB::tcllauncher::pidfile_write\fR
+.sp
+\fB::tcllauncher::pidfile_close\fR
+.sp
+\fB::tcllauncher::pidfile_remove\fR
+.sp
+\fB::tcllauncher::daemonize\fR ?\fI-noclose\fR? ?\fI-nochdir\fR?
+.sp
+\fB::tcllauncher::require_user\fR \fIuserName\fR
+.sp
+\fB::tcllauncher::require_group\fR \fIgroupName\fR
+.sp
+\fB::tcllauncher::require_user_and_group\fR \fIuserName\fR \fIgroupName\fR
+.sp
+.BE
+.SH DESCRIPTION
+.PP
+tcllauncher is a way to have Tcl programs run out of /usr/local/bin under
+their own name, be installed in one place with their support files, and
+provides commands to facilitate server-oriented application execution.
+.PP
+Now you might think, why bother?  I'll just put my script in there and
+do a #! thing to invoke Tcl.
+.PP
+Well, OK, but this has certain problems:
+.IP \(bu
+All your Tcl programs will show in "ps" as tclsh
+.IP \(bu
+All your Tcl programs will show in "top" as tclsh
+.IP \(bu
+if there are any files you want to pull in that aren't in a package,
+you have to invent your own place to install and locate them.
+.PP
+.PP
+You'd like to be able to have stuff show up as its script name.
+.PP
+You could just copy or even link tclsh to the name of your program.
+Say, for instance, trackserver.
+.PP
+But then you have to invoke trackserver with arguments and do stuff to
+prep it, like:
+.nf
+
+    cd ...somewhere...
+    /usr/local/bin/trackserver main.tcl
+
+.fi
+That's the original purpose for tcllauncher, just to make that reasonable.
+.nf
+
+    cp /usr/local/bin/tcllauncher /usr/local/bin/trackserver
+
+    trackserver
+
+.fi
+How does it find its files?  It cd's to the corresponding lib directory and
+a directory underneath that of the same name as the application, and sources
+"\fImain.tcl\fR" with \fBtcl_interactive\fR set to 0.
+.PP
+So when "\fItcllauncher\fR" is installed as "\fItrackserver\fR" and you run trackserver, what happens "\fI/usr/local/bin/trackserver\fR" starts up like the
+Tcl shell, except that it sources in "\fI/usr/local/lib/trackserver/main.tcl\fR".
+Also, a global variable called \fBlaunchdir\fR is set containing the "launch
+directory," i.e. the directory where main.tcl was loaded from.
+( In the above example, "\fI/usr/local/lib/trackserver.\fR")
+.SH "WHAT DIRECTORY"
+Tcllauncher doesn't change your directory behind your back, so wherever you
+are at when you run it, you're still in that directory.
+.PP
+But a lot of times you want to go to your application directory, so you
+can just
+.nf
+
+	cd $::launchdir
+
+.fi
+Then you can source in all of your various files and stuff like that.
+.SH "PROCESS GROUP"
+If you are going to fork off children, exec them, or whatever, you should
+probably become your own process group so hopefully your children might
+inherit your signals and Do The Right Thing.
+.nf
+
+    id process group set
+
+.fi
+The \fBid\fR command is from the TclX extension.
+.SH "PID FILE"
+Lots of apps write a file with the server's process ID in it.  Upon relaunch,
+the program can come along and look in its own pid file to see if it's already
+alive or not, and also to potentially kill it.
+.PP
+Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
+.PP
+.TP
+\fB::tcllauncher::pidfile_open\fR ?\fIpath\fR? ?\fImode\fR?
+Given an optional path to a directory and optional permissions,
+pidfile_open opens (or creates) a file specified by the path
+and locks it with TclX's interface to the \fBflock\fR system call.
+.sp
+If the file cannot be locked, the PID of an already running daemon is
+returned.
+Otherwise zero is returned and you've got the lock. You can now call
+\fBpidfile_write\fR to get your pid into the lock file.
+.sp
+This function does not write your process' PID into the file,
+so it can be used before forking if needed.
+.sp
+If path is not specified, "\fI/var/run\fR" is psed, and if mode is not
+specified, 0600 is used.
+.TP
+\fB::tcllauncher::pidfile_write\fR
+Writes your pid into the pid file previously opened by \fBpidfile_open\fR.
+.TP
+\fB::tcllauncher::pidfile_close\fR
+Close a pidfile.  It should be used after your daemon forks to start
+a child process.
+.TP
+\fB::tcllauncher::pidfile_remove\fR
+Close and remove a pidfile.
+.PP
+.SH EXAMPLE
+.nf
+
+    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid 0600]
+    if {$pid > 0} {
+	puts stderr "pid $pid already has the lock"
+	exit 1
+    }
+
+    ::tcllauncher::daemonize
+
+    ::tcllauncher::pidfile_write
+
+    ...do work...
+
+    ::tcllauncher::pidfile_remove
+    exit
+
+.fi
+.SH DAEMONIZE
+Sometimes you want your program to spawn itself off into the background in
+a way that when you logout it doesn't kill the process, etc.
+To daemonize a tcllauncher app,
+.TP
+\fB::tcllauncher::daemonize\fR ?\fI-noclose\fR? ?\fI-nochdir\fR?
+By default this forks off a child and exits the parent.  In the child, it
+changes the current directory to "\fI/\fR", and redirects stdin, stdout and
+stderr to/from "\fI/dev/null\fR".
+.sp
+Specifying \fI-noclose\fR prevents the closing and redirecting of stdin,
+stdout and stderr, while \fI-nochdir\fR prevents the changing of the working
+dir to "\fI/\fR"
+.sp
+This is a rough copy of BSD 4.4's \fBdaemon\fR library routine.
+.PP
+.SH "USER AND GROUP ID MANAGEMENT"
+If a program needs to be run as a certain use, it can invoke
+.TP
+\fB::tcllauncher::require_user\fR \fIuserName\fR
+This requires the program to either be run as fred or as root or something
+like that, by a user that has permissions to become fred.
+.sp
+If the program is running as user fred or can change the user id (suid) to
+fred, it continues, else it aborts.
+.sp
+This means if the superuser invokes the program, it will change user to the correct user.  If the correct user invokes the program, it will correctly do nothing and proceed.  Handy.
+.TP
+\fB::tcllauncher::require_group\fR \fIgroupName\fR
+does for groups what require_user does for
+users.
+.TP
+\fB::tcllauncher::require_user_and_group\fR \fIuserName\fR \fIgroupName\fR
+combines changing the group and user into a single procedure.
+.PP
+.PP
+Note that if you require user first then require group, the process may have
+lost the privileges necessary to change groups after changing users.  Either
+require the group ID first or use \fB::tcllauncher::require_user_and_group\fR
+to do both.
+.SH KEYWORDS
+background, daemon, daemonize, tcllauncher
+.SH COPYRIGHT
+.nf
+Copyright (c) 2007-2009 FlightAware LLC (BSD Liscense)
+
+.fi
