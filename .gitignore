@@ -6,4 +6,5 @@ configure
 pkgIndex.tcl
 *.o
 *.so
+*.dylib
 tcllauncher
