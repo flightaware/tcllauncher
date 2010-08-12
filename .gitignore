@@ -8,3 +8,4 @@ pkgIndex.tcl
 *.so
 *.dylib
 tcllauncher
+libtcllauncher.so*
