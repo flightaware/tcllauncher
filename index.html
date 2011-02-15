@@ -1,1 +1,383 @@
-our github page
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <title>tcllauncher</title>
+    
+    <style type="text/css">
+      body {
+        background-color: #D5D6D7;
+        padding:20px;
+        text-align: center;
+        align: center;
+      }
+      .header {
+        border-bottom: 1px solid #959596;
+        padding: 5px;
+        color: #ffffff;
+        background-color: rgb(115, 160, 197);
+      }
+      .header a {
+        text-decoration: none;
+        color: #ffffff;
+      }
+      .pageTitle {
+        font-size: 3em;
+        font-weight: normal;
+      }
+      .small { font-size: 1em; }
+
+      #outerContainer {
+        border:1px solid #959596;
+        font-family: "helvetica"; 
+        color: #000000;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      #container {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+        width: 700px;
+        color: #333333;
+      }
+      h1 { font-size: 3.8em; color: #736f30; margin-bottom: 3px; }
+      h1 .small { font-size: 0.4em; }
+      h1 a { text-decoration: none }
+      h2 { font-size: 1.5em; text-align: center;}
+      h3 { font-size: 1.2em; color: #111144}
+      .description {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+        margin-top: 30px;
+        font-style: italic;
+      }
+      .download { float: right; }
+      pre { background: #f4f4f4; color: #000080; padding: 15px;}
+      hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+      .footer { text-align:center; padding-top:30px; font-style: italic; }
+      .styleCredit { font-size: 75%; }
+    </style>
+    
+</head>
+
+<body>
+  <a href="http://github.com/flightaware/tcllauncher"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  
+  <div id="outerContainer">
+  <div class="header">
+    <span class="pageTitle">
+      <a href="http://github.com/flightaware/tcllauncher">tcllauncher</a>
+    </span><br>
+    <span class="small">
+      by  <a href="http://flightaware.com/">flightaware</a>
+    </span>
+  </div>
+  <div id="container">
+    <div class="description">
+      Launcher program for Tcl applications.
+    </div>
+
+    <h2>Overview</h2>
+
+	  <p>
+	  tcllauncher is a way to have Tcl programs run out of /usr/local/bin 
+	  under their own name, be installed in one place with their support 
+	  files, and provides commands to facilitate server-oriented 
+	  application execution.
+	  </p>
+	  <p>
+	  Now you might think, why bother?  I'll just put my script in there and
+	  do a #! thing to invoke Tcl.
+	  </p>
+	  <p>
+	  Well, OK, but this has certain problems:
+	  <ul>
+	  <li> All your Tcl programs will show in "ps" as tclsh
+	  <li> All your Tcl programs will show in "top" as tclsh
+	  <li> if there are any files you want to pull in that aren't in a package,
+	  you have to invent your own place to install and locate them.
+	  </ul>
+	  </p>
+	  <p>
+	  You'd like to be able to have stuff show up as its script name.
+	  </p>
+	  <p>
+	  You could just copy or even link tclsh to the name of your program.
+	  Say, for instance, trackserver.
+	  </p>
+	  <p>
+	  But then you have to invoke trackserver with arguments and do stuff to
+	  prep it, like:
+	  </p>
+<pre>
+cd ...somewhere...
+/usr/local/bin/trackserver main.tcl
+</pre>
+<p>
+That's the original purpose for tcllauncher, just to make that reasonable.
+<pre>
+cp /usr/local/bin/tcllauncher /usr/local/bin/trackserver
+
+trackserver
+</pre>
+<p>
+How does it find its files?  It cd's to the corresponding lib directory
+and a directory underneath that of the same name as the application, and 
+sources the file <b>main.tcl</b> with the variable <i>tcl_interactive</i>
+set to 0.
+</p>
+<p>
+SO when <i>tcllauncher</i> is installed as <i>trackserver</i> and you run
+trackserver, what happens, <i>/usr/local/bin/trackserver</i> starts up
+like the Tcl shell, except that it sources in the file
+<i>/usr/local/bin/trackserver/main.tcl</i>.
+</p>
+<p>
+Also a global variable called <i>launchdir</i> is set, containing the
+"launch directory," i.e. the directory where main.tcl was loaded from.
+(In the above example, <i>/usr/local/lib/trackserver</i>.)
+<h3>What Directory</h3>
+<p>
+Tcllauncher doesn't change your directory behind your back, so wherever you
+are when you run it, you're still in that directory.
+</p>
+But a lot of times you want to go to your application directory, so you can
+just
+<pre>
+cd $::launchdir
+</pre>
+<p>
+Then you can source in all of your various files and stuff like that.
+A common tcllauncher coding pattern is to store the current directory
+in a variable, cd to launchdir, source in files, then cd back to the original
+directory.
+</p>
+<h3>PROCESS GROUP</h3>
+<p>
+If you are going to fork off children, exec them, or whatever, you should
+probably become your own process group so hopefully your children might
+inherit your signals and Do The Right Thing.
+</p>
+<code>
+    id process group set
+</code>
+<p>
+The <i>id</i> command is from the TclX extension.
+</p>
+<h3>PID FILE</h3>
+<p>
+Lots of apps write a file with the server's process ID in it.  Upon relaunch,
+the program can come along and look in its own pid file to see if it's already
+alive or not, and also to potentially kill it.
+</p>
+<p>
+Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
+</p>
+<p>
+<code>
+::tcllauncher::pidfile_open ?path? ?mode?
+</code>
+<p>
+Given an optional path to a directory and optional permissions, 
+<i>pidfile_open</i> opens (or creates) a file specified by the path
+and locks it with TclX's interface to the <i>flock</i> system call.
+</p>
+<p>
+If the file cannot be locked, the PID of an already running daemon is
+returned.
+</p>
+<p>
+Otherwise zero is returned and you've got the lock. You can now call 
+<i>pidfile_write</i> to get your pid into the lock file.
+</p>
+<p>
+This function does not write your process' PID into the file,
+so it can be used before forking if needed.
+</p>
+<p>
+If path is not specified, <i>/var/run</i> is used, and if mode is not
+specified, 0600 is used.
+</p>
+<p>
+<code>::tcllauncher::pidfile_write</code>
+Writes your pid into the pid file previously opened by [cmd pidfile_open].
+</p>
+<p>
+<code>::tcllauncher::pidfile_close</code>
+closes a pidfile.  It should be used after your daemon forks to start
+a child process.
+</p>
+<p>
+<code>::tcllauncher::pidfile_remove</code> closes and removes a pidfile.
+<h3>Example</h3>
+<pre>
+    set pid [lb]::tcllauncher::pidfile_open "/var/run/daemon.pid 0600[rb]
+    if {$pid > 0} {
+	puts stderr "pid $pid already has the lock"
+	exit 1
+    }
+
+    ::tcllauncher::daemonize
+
+    ::tcllauncher::pidfile_write
+
+    ...do work...
+
+    ::tcllauncher::pidfile_remove
+    exit
+</pre>
+<h3>DAEMONIZE</h3>
+<p>
+Sometimes you want your program to spawn itself off into the background in
+a way that when you logout it doesn't kill the process, etc.
+</p>
+<p>
+To daemonize a tcllauncher app,
+</p>
+<p>
+<code>::tcllauncher::daemonize] ?-noclose? ?-nochdir?</code>
+</p>
+<p>
+By default this forks off a child and exits the parent.  In the child, it
+changes the current directory to <b>/</b>, and redirects <i>stdin</i>, 
+<i>stdout</i> and <i>stderr</i> to/from <i>/dev/null</i>.
+<p>
+Specifying <i>-noclose</i> prevents the closing and redirecting of stdin,
+stdout and stderr, while <i>-nochdir</i> prevents the changing of the working
+dir to /.
+</p>
+<p>
+This is a rough copy of BSD 4.4's <i>daemon</i> library routine.
+</p>
+<h3>USER AND GROUP ID MANAGEMENT</h3>
+<p>
+If a program needs to be run as a certain user, it can invoke
+</p>
+<code>::tcllauncher::require_user userName</code>
+<p>
+This requires the program to either be run as fred or as root or something
+like that, by a user that has permissions to become fred.
+</p>
+<p>
+If the program is running as user fred or can change the user id (suid) to
+fred, it continues, else it aborts.
+</p>
+<p>
+This means if the superuser invokes the program, it will change user to the correct user.  If the correct user invokes the program, it will correctly do nothing and proceed.  Handy.
+</p>
+<p>
+<i>::tcllauncher::require_group groupName</i> does for groups what 
+<i>require_user</i> does for users.
+</p>
+<p>
+<code>::tcllauncher::require_user_and_group] userName groupName</code>
+</p>
+<p>
+combines changing the group and user into a single procedure.
+</p>
+<p>
+Note that if you require user first then require group, the process may have
+lost the privileges necessary to change groups after changing users.  Either
+require the group ID first or use <i>::tcllauncher::require_user_and_group</i>
+to do both.
+<p>
+    <h2>Code</h2>
+    <p>
+      Get it on github: <a href="http://github.com/flightaware/tcllauncher">http://github.com/flightaware/tcllauncher</a>
+    </p>
+    <h2>Support</h2>
+    <p>
+        You can sometimes find tcllauncher on IRC in the <code>#tcl</code> channel on the <a href="http://freenode.net">Freenode</a> network 
+        or you can file issues with github <a href="https://github.com/flightaware/tcllauncher/issues">here</a>.
+    </p>
+    <h2>Download</h2>
+    <p>
+      <ul>
+	  <li><a href="https://github.com/flightaware/tcllauncher/tarball/master">Latest Source as a tarball</a>
+	  <li><a href="https://github.com/flightaware/tcllauncher/zipball/master">Latest Source as a tarball</a>
+	  <li><a href="https://github.com/downloads/flightaware/tcllauncher/tcllauncher-1.2.tar.gz">tcllauncher-1.2.tar.gz</a>
+       </ul>
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ git clone git://github.com/flightaware/tcllauncher</pre>
+    </p>
+    <h2>Using tcllauncher</h2>
+    <h2>License</h2>
+
+    <pre>
+This software is copyrighted by Karl Lehenbauer and FlightAware, 
+and includes modified sample extension code copyright Scriptics 
+corporation, and other parties.  The following terms apply to all files associated with the
+software unless explicitly disclaimed in individual files.
+
+$Id: license.terms,v 1.2 2005-11-21 11:38:11 karl Exp $
+
+The author hereby grants permission to use, copy, modify, distribute,
+and license this software and its documentation for any purpose, provided
+that existing copyright notices are retained in all copies and that this
+notice is included verbatim in any distributions. No written agreement,
+license, or royalty fee is required for any of the authorized uses.
+Modifications to this software may be copyrighted by their authors
+and need not follow the licensing terms described here, provided that
+the new terms are clearly indicated on the first page of each file where
+they apply.
+
+IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+DERIVATIVES THEREOF, EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+MODIFICATIONS.
+
+GOVERNMENT USE: If you are acquiring this software on behalf of the
+U.S. government, the Government shall have only "Restricted Rights"
+in the software and related documentation as defined in the Federal
+Acquisition Regulations (FARs) in Clause 52.227.19 (c) (2).  If you
+are acquiring the software on behalf of the Department of Defense, the
+software shall be classified as "Commercial Computer Software" and the
+Government shall have only "Restricted Rights" as defined in Clause
+252.227-7013 (c) (1) of DFARs.  Notwithstanding the foregoing, the
+authors grant the U.S. Government and others acting in its behalf
+permission to use and distribute the software in accordance with the
+terms specified in this license.
+~                                         
+</pre>
+
+    <div class="footer">
+      get the source code on GitHub : <a href="http://github.com/flightaware/tcllauncher">http://github.com/flightaware/tcllauncher</a>
+    </div>
+    
+    <div class="styleCredit footer">
+      (page style "borrowed" from
+       <a href="http://kylecordes.com">Kyle Cordes</a>)
+    </div>
+    
+  </div></div>
+</body>
+
+<link type="text/css" rel="stylesheet" href="dp.SyntaxHighlighter/SyntaxHighlighter.css"></link>
+<script language="javascript" src="dp.SyntaxHighlighter/shCore.js"></script>
+<script language="javascript" src="dp.SyntaxHighlighter/shBrushCpp.js"></script>
+<script language="javascript">
+dp.SyntaxHighlighter.HighlightAll('code');
+</script>
+</html>
+    <div class="description">
+    </div>
+
+  </div>
+
+  
+</body>
+</html>
