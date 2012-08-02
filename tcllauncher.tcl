@@ -1,9 +1,6 @@
 #
 # tcllauncher.tcl - tcl code that tcllauncher uses to do its thing
 #
-#
-# $Id: tcllauncher.tcl,v 1.8 2008-03-25 22:22:18 karl Exp $
-#
 
 package require Tclx
 
@@ -240,7 +237,7 @@ proc pidfile_remove {} {
 # this routine must now figure out what to do to launch the app
 # 
 #
-proc doit {{argv ""}} {
+proc main {{argv ""}} {
     set prog [info nameofexecutable]
 
     # have we been invoked as a shell?  If so, prog is empty, get it from
@@ -294,7 +291,7 @@ proc doit {{argv ""}} {
     uplevel #0 source $path
 }
 
-if !$tcl_interactive {doit $argv}
+if !$tcl_interactive {main $argv}
 
 }
 
