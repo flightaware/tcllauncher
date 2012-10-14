@@ -285,10 +285,17 @@ proc main {{argv ""}} {
     }
 
     set ::argv0 $shortName
+    set initialArgv $argv
 
     # ok now source in the file we (tcllauncher) figured out is the one
 
-    uplevel #0 source $path
+    if {[catch {uplevel #0 source $path} catchResult] == 1} {
+        append ::errorInfo "\n    from tcllauncher running \"[string trim "$::argv0 $initialArgv"]\""
+	puts stderr $::errorInfo
+        exit 255
+    }
+
+    exit 0
 }
 
 if !$tcl_interactive {main $argv}
