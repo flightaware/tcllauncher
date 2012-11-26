@@ -102,6 +102,12 @@ Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
 
     Writes your pid into the pid file previously opened by pidfile_open.
 
+::tcllauncher::pidfile_mtime
+
+Return the mtime of the pidfile.  Can be used after a successful or unsuccessful
+call to pidfile_open.  Considered useful after pidfile_open fails due to another
+process holding the lock to examine when the owner process got the lock.
+
 ::tcllauncher::pidfile_close 
 
     Close a pidfile.  It should be used after your daemon forks to start

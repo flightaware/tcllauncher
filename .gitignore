@@ -9,3 +9,4 @@ pkgIndex.tcl
 *.dylib
 tcllauncher
 libtcllauncher.so*
+tcllauncher-support.tcl
