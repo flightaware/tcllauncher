@@ -98,6 +98,10 @@ Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
     This function does not write your process' PID into the file,
     so it can be used before forking if needed.
 
+    If the path is empty, /var/run/$::argv0.pid is used.  If the mode
+    isn't specified, a mode of 0600 (read and write for the owner, no
+    access from group or other).
+
 ::tcllauncher::pidfile_write
 
     Writes your pid into the pid file previously opened by pidfile_open.

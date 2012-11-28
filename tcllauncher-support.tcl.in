@@ -146,10 +146,15 @@ proc pidfile_read {path _pid} {
 #
 #  else you've got the lock and call pidfile_write to get your pid in there
 #
-proc pidfile_open {{path "/var/run"} {mode 0600}} {
+proc pidfile_open {{path ""} {mode 0600}} {
     variable pfh
 
-    set pidfile $path/$::argv0.pid
+    if {$path == ""} {
+        set pidfile /var/run/$::argv0.pid
+    } else {
+        set pidfile $path
+    }
+
     set pfh(path) $pidfile
 
     # Open the PID file and obtain exclusive lock.
@@ -157,7 +162,7 @@ proc pidfile_open {{path "/var/run"} {mode 0600}} {
     # PID file will be truncated again in pidfile_write(), so
     # pidfile_write() can be called multiple times.
 
-    set fp [open $pidfile "RDWR CREAT"]
+    set fp [open $pidfile "RDWR CREAT" $mode]
 
     # try to lock the file
 

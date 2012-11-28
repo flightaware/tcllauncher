@@ -10,3 +10,4 @@ pkgIndex.tcl
 tcllauncher
 libtcllauncher.so*
 tcllauncher-support.tcl
+.*.swp
