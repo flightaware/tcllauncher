@@ -77,7 +77,7 @@ TEA_ADD_INCLUDES([])
 TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
-TEA_ADD_TCL_SOURCES([tcllauncher.tcl])
+TEA_ADD_TCL_SOURCES([tcllauncher.tcl tcllauncher-support.tcl])
 
 #--------------------------------------------------------------------
 # __CHANGE__
@@ -201,4 +201,4 @@ AC_SUBST(CC_SEARCH_FLAGS)
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
 
-AC_OUTPUT([Makefile pkgIndex.tcl tcllauncher-support.tcl])
+AC_OUTPUT([Makefile pkgIndex.tcl])
