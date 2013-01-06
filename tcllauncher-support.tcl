@@ -152,7 +152,7 @@ proc pidfile_open {{path ""} {mode 0600}} {
     if {$path == ""} {
         set pidfile /var/run/$::argv0.pid
     } else {
-        set pidfile $path
+        set pidfile $path/$::argv0.pid
     }
 
     set pfh(path) $pidfile
