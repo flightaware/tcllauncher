@@ -56,9 +56,15 @@ proc require_user_and_group {user group} {
 }
 
 #
-# daemonize - rough tclx-based copy of BSD 4.4's daemon library routine
+# daemonize - rough tclx-based copy of BSD 4.4's "daemon" library routine
 #
-
+# usage: daemonize ?-noclose? ?-nochdir?
+#
+# detaches the process from the controlling terminal by forking, having
+# the child become a process group leader, changing directory to / (by
+# default) and closing and reopening stdin, stdout and stderr to and
+# from /dev/null.
+#
 proc daemonize {args} {
     set doClose 1
     set doChdir 1
@@ -248,4 +254,4 @@ proc pidfile_remove {} {
 
 } ;# namespace tcllauncher
 
-package provide Tcllauncher 1.3
+package provide Tcllauncher 1.4

@@ -149,6 +149,15 @@ Tcl_AppInit(interp)
      */
 
     /*
+     * package require the tcllauncher package so that the helper routines
+     * will get loaded via the normal package mechanism.  doing it this
+     * way then tcllauncher apps don't have to package require tcllauncher
+     */
+    if (Tcl_PkgRequire (interp, PACKAGE_NAME, PACKAGE_VERSION, 1) == NULL) {
+        return TCL_ERROR;
+    }
+
+    /*
      * Call Tcl_CreateCommand for application-specific commands, if
      * they weren't already created by the init procedures called above.
      */
