@@ -12,7 +12,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# RCS: @(#) $Id: Makefile.in,v 1.7 2008-11-18 22:32:07 karl Exp $
+# RCS: @(#) $Id$
 
 #========================================================================
 # Add additional lines to handle any additional AC_SUBST cases that
@@ -62,9 +62,8 @@ PKG_HEADERS	= @PKG_HEADERS@
 PKG_LIB_FILE	= @PKG_LIB_FILE@
 PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 
-lib_BINARIES	= $(PKG_LIB_FILE)
-bin_BINARIES	= tcllauncher
-BINARIES	= $(lib_BINARIES) $(bin_BINARIES)
+lib_BINARIES	= $(PKG_LIB_FILE) $(PKG_STUB_LIB_FILE)
+BINARIES	= $(lib_BINARIES)
 
 SHELL		= @SHELL@
 
@@ -75,7 +74,7 @@ exec_prefix	= @exec_prefix@
 bindir		= @bindir@
 libdir		= @libdir@
 includedir	= @includedir@
-#datarootdir     = @datarootdir@
+datarootdir     = @datarootdir@
 datadir		= @datadir@
 mandir		= @mandir@
 
@@ -88,10 +87,13 @@ pkgincludedir	= $(includedir)/$(PKG_DIR)
 
 top_builddir	= .
 
-INSTALL		= @INSTALL@
-INSTALL_PROGRAM	= @INSTALL_PROGRAM@
-INSTALL_DATA	= @INSTALL_DATA@
-INSTALL_SCRIPT	= @INSTALL_SCRIPT@
+INSTALL_OPTIONS =
+INSTALL         = $(SHELL) $(srcdir)/tclconfig/install-sh -c ${INSTALL_OPTIONS}
+INSTALL_DATA_DIR = ${INSTALL} -d -m 755
+INSTALL_PROGRAM = ${INSTALL} -m 755
+INSTALL_DATA    = ${INSTALL} -m 444
+INSTALL_SCRIPT  = ${INSTALL_PROGRAM}
+INSTALL_LIBRARY = ${INSTALL_DATA}
 
 PACKAGE_NAME	= @PACKAGE_NAME@
 PACKAGE_VERSION	= @PACKAGE_VERSION@
@@ -104,6 +106,7 @@ MAKE_LIB	= @MAKE_LIB@
 MAKE_SHARED_LIB	= @MAKE_SHARED_LIB@
 MAKE_STATIC_LIB	= @MAKE_STATIC_LIB@
 MAKE_STUB_LIB	= @MAKE_STUB_LIB@
+ADD_MANIFEST    = @ADD_MANIFEST@
 OBJEXT		= @OBJEXT@
 RANLIB		= @RANLIB@
 RANLIB_STUB	= @RANLIB_STUB@
@@ -133,7 +136,8 @@ TCLLIBPATH	= $(top_builddir)
 TCLSH_ENV	= TCL_LIBRARY=`@CYGPATH@ $(TCL_SRC_DIR)/library`
 PKG_ENV		= @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
 		  PATH="$(EXTRA_PATH):$(PATH)" \
-		  TCLLIBPATH="$(TCLLIBPATH)"
+		  TCLLIBPATH="$(TCLLIBPATH)" \
+                  TDBC_LIBRARY=`@CYGPATH@ $(srcdir)/library` 
 
 TCLSH_PROG	= @TCLSH_PROG@
 TCLSH   	= $(PKG_ENV) $(TCLSH_ENV) $(TCLSH_PROG)
@@ -158,7 +162,7 @@ PKG_CFLAGS	= @PKG_CFLAGS@
 DEFS		= @DEFS@ $(PKG_CFLAGS)
 
 # Move pkgIndex.tcl to 'BINARIES' var if it is generated in the Makefile
-CONFIG_CLEAN_FILES = Makefile pkgIndex.tcl
+CONFIGURE_OUTPUTS = @CONFIGURE_OUTPUTS@
 CLEANFILES	= @CLEANFILES@
 
 CPPFLAGS	= @CPPFLAGS@
@@ -189,6 +193,7 @@ all: binaries libraries doc
 #========================================================================
 
 binaries: $(BINARIES)
+	cp -p $(srcdir)/library/tcllauncher-support.tcl $(top_builddir)
 
 libraries:
 
@@ -198,21 +203,7 @@ libraries:
 # end user machine when building from source.
 #========================================================================
 
-DTPLITE=@DTPLITE@
-
-doc:	$(srcdir)/doc/tcllauncher.n
-
-$(srcdir)/doc/tcllauncher.n:	$(srcdir)/doc/tcllauncher.man
-	@if [ -n "$(DTPLITE)" -a -x "$(DTPLITE)" ]; then \
-	    echo "Building $@"; \
-	    $(DTPLITE) -o $@ nroff $(srcdir)/doc/tcllauncher.man ; \
-	fi
-
-tcllauncher.html:	$(srcdir)/doc/tcllauncher.man
-	@if [ -n "$(DTPLITE)" -a -x "$(DTPLITE)" ]; then \
-	    echo "Building $@"; \
-	    $(DTPLITE) -o $@ html $(srcdir)/doc/hdp.man ; \
-	fi
+doc:
 
 install: all install-binaries install-libraries install-doc
 
@@ -224,7 +215,7 @@ install-binaries: binaries install-lib-binaries install-bin-binaries
 #========================================================================
 
 install-libraries: libraries
-	@mkdir -p $(DESTDIR)$(includedir)
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(includedir)
 	@echo "Installing header files in $(DESTDIR)$(includedir)"
 	@list='$(PKG_HEADERS)'; for i in $$list; do \
 	    echo "Installing $(srcdir)/$$i" ; \
@@ -237,7 +228,7 @@ install-libraries: libraries
 #========================================================================
 
 install-doc: doc
-	@mkdir -p $(DESTDIR)$(mandir)/mann
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(mandir)/man3 $(DESTDIR)$(mandir)/mann
 	@echo "Installing documentation in $(DESTDIR)$(mandir)"
 	@list='$(srcdir)/doc/*.n'; for i in $$list; do \
 	    echo "Installing $$i"; \
@@ -246,7 +237,9 @@ install-doc: doc
 	done
 
 test: binaries libraries
-	$(TCLSH) `@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS)
+	@$(TCLSH) `@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS) \
+		-load "package ifneeded ${PACKAGE_NAME} ${PACKAGE_VERSION} \
+			[list source `@CYGPATH@ $(srcdir)/library/tcllauncher-support.tcl`]\;[list load `@CYGPATH@ $(PKG_LIB_FILE)` $(PACKAGE_NAME)]"
 
 shell: binaries libraries
 	@$(TCLSH) $(SCRIPT)
@@ -269,6 +262,7 @@ depend:
 $(PKG_LIB_FILE): $(PKG_OBJECTS)
 	-rm -f $(PKG_LIB_FILE)
 	${MAKE_LIB}
+	$(ADD_MANIFEST)
 	$(RANLIB) $(PKG_LIB_FILE)
 
 $(PKG_STUB_LIB_FILE): $(PKG_STUB_OBJECTS)
@@ -301,8 +295,7 @@ VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win
 # You may need to tweak this target to make it work correctly.
 #========================================================================
 
-#COMPRESS	= tar cvf $(PKG_DIR).tar $(PKG_DIR); compress $(PKG_DIR).tar
-COMPRESS	= gtar zcvf $(PKG_DIR).tar.gz $(PKG_DIR)
+COMPRESS	= tar zcvf $(PKG_DIR).tar.gz $(PKG_DIR)
 DIST_ROOT	= /tmp/dist
 DIST_DIR	= $(DIST_ROOT)/$(PKG_DIR)
 
@@ -324,18 +317,24 @@ dist: dist-clean
 	done;
 
 	mkdir $(DIST_DIR)/tclconfig
-	cp $(srcdir)/tclconfig/install-sh $(srcdir)/tclconfig/tcl.m4 \
+	cp -p $(srcdir)/tclconfig/install-sh $(srcdir)/tclconfig/tcl.m4 \
+		$(srcdir)/tclconfig/ChangeLog $(srcdir)/tclconfig/README.txt \
 		$(DIST_DIR)/tclconfig/
 	chmod 664 $(DIST_DIR)/tclconfig/tcl.m4
 	chmod +x $(DIST_DIR)/tclconfig/install-sh
 
-	list='demos doc generic library mac tests unix win'; \
-	for p in $$list; do \
-	    if test -d $(srcdir)/$$p ; then \
-		mkdir $(DIST_DIR)/$$p; \
-		cp -p $(srcdir)/$$p/*.* $(DIST_DIR)/$$p/; \
-	    fi; \
-	done
+	mkdir $(DIST_DIR)/doc
+	cp -p $(srcdir)/doc/tcllauncher.n \
+		$(DIST_DIR)/doc/
+
+	mkdir $(DIST_DIR)/generic
+	cp -p $(srcdir)/generic/launcher.c \
+		$(srcdir)/generic/launcher.h \
+		$(srcdir)/generic/tcllauncher.c \
+		$(DIST_DIR)/generic/
+
+	mkdir $(DIST_DIR)/library
+	cp -p $(srcdir)/library/tcllauncher-support.tcl $(DIST_DIR)/library/
 
 	(cd $(DIST_ROOT); $(COMPRESS);)
 
@@ -355,8 +354,7 @@ clean:
 
 distclean: clean
 	-rm -f *.tab.c
-	-rm -f $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log config.status
+	-rm -f $(CONFIGURE_OUTPUTS)
 
 #========================================================================
 # Install binary object libraries.  On Windows this includes both .dll and
@@ -370,7 +368,7 @@ distclean: clean
 #========================================================================
 
 install-lib-binaries: binaries
-	@mkdir -p $(DESTDIR)$(pkglibdir)
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(pkglibdir)
 	@list='$(lib_BINARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
 	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(pkglibdir)/$$p"; \
@@ -392,14 +390,14 @@ install-lib-binaries: binaries
 		fi; \
 	    fi; \
 	  fi; \
-	done
+	done;
 	@list='$(PKG_TCL_SOURCES)'; for p in $$list; do \
 	  if test -f $(srcdir)/$$p; then \
 	    destp=`basename $$p`; \
 	    echo " Install $$destp $(DESTDIR)$(pkglibdir)/$$destp"; \
 	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(pkglibdir)/$$destp; \
 	  fi; \
-	done
+	done;
 	@if test "x$(SHARED_BUILD)" = "x1"; then \
 	    echo " Install pkgIndex.tcl $(DESTDIR)$(pkglibdir)"; \
 	    $(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(pkglibdir); \
@@ -415,13 +413,13 @@ install-lib-binaries: binaries
 #========================================================================
 
 install-bin-binaries: binaries
-	@mkdir -p $(DESTDIR)$(bindir)
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(bindir)
 	@list='$(bin_BINARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
 	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p"; \
 	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p; \
 	  fi; \
-	done
+	done;
 
 .SUFFIXES: .c .$(OBJEXT)
 
@@ -446,18 +444,3 @@ uninstall-binaries:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
-
-tclAppInit.o:	unix/tclAppInit.c
-	$(COMPILE) -c $(APP_CC_SWITCHES) -DTCLLAUNCHER_FILE="\"$(pkglibdir)/tcllauncher.tcl\"" unix/tclAppInit.c
-
-TCLSH_OBJS = tclAppInit.o
-
-tcllauncher:	${TCLSH_OBJS} ${TCL_LIB_FILE}
-	${CC} ${CFLAGS} ${LDFLAGS} ${TCLSH_OBJS} ${LIBS} \
-	${CC_SEARCH_FLAGS} ${TCL_LIB_SPEC} -o tcllauncher
-
-TCL_LIB_SPEC=@TCL_LIB_SPEC@
-LIB_RUNTIME_DIR=$(libdir)
-LD_SEARCH_FLAGS=@LD_SEARCH_FLAGS@
-CC_SEARCH_FLAGS=@CC_SEARCH_FLAGS@
-

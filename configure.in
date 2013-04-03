@@ -27,9 +27,9 @@ AC_INIT([Tcllauncher], [1.4])
 # as well as PKG_LIB_FILE and PKG_STUB_LIB_FILE.
 #--------------------------------------------------------------------
 
-TEA_INIT([3.8])
-
 AC_CONFIG_AUX_DIR(tclconfig)
+TEA_INIT([3.9])
+
 
 #--------------------------------------------------------------------
 # Load the tclConfig.sh file
@@ -60,6 +60,7 @@ TEA_PREFIX
 #-----------------------------------------------------------------------
 
 TEA_SETUP_COMPILER
+AC_C_INLINE
 
 #-----------------------------------------------------------------------
 # __CHANGE__
@@ -77,7 +78,7 @@ TEA_ADD_INCLUDES([])
 TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
-TEA_ADD_TCL_SOURCES([tcllauncher.tcl tcllauncher-support.tcl])
+TEA_ADD_TCL_SOURCES([tcllauncher.tcl library/tcllauncher-support.tcl])
 
 #--------------------------------------------------------------------
 # __CHANGE__
@@ -170,6 +171,7 @@ AC_DEFINE(USE_TCL_STUBS, 1, [Use Tcl stubs])
 #--------------------------------------------------------------------
 
 TEA_MAKE_LIB
+TEAX_VC_MANIFEST
 
 #--------------------------------------------------------------------
 # Determine the name of the tclsh and/or wish executables in the
@@ -200,5 +202,9 @@ AC_SUBST(CC_SEARCH_FLAGS)
 # You may alternatively have a special pkgIndex.tcl.in or other files
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
+CONFIGURE_OUTPUTS="Makefile pkgIndex.tcl config.cache config.log config.status"
+AC_SUBST(CONFIGURE_OUTPUTS)
 
-AC_OUTPUT([Makefile pkgIndex.tcl])
+AC_CONFIG_FILES([Makefile pkgIndex.tcl])
+AC_OUTPUT
+

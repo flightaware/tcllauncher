@@ -39,6 +39,7 @@ Tcllauncher_Init(Tcl_Interp *interp)
     if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {
 	return TCL_ERROR;
     }
+
     if (Tcl_PkgRequire(interp, "Tcl", "8.1", 0) == NULL) {
 	return TCL_ERROR;
     }
