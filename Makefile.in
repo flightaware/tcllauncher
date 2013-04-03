@@ -63,7 +63,8 @@ PKG_LIB_FILE	= @PKG_LIB_FILE@
 PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 
 lib_BINARIES	= $(PKG_LIB_FILE) $(PKG_STUB_LIB_FILE)
-BINARIES	= $(lib_BINARIES)
+bin_BINARIES	= tcllauncher
+BINARIES	= $(lib_BINARIES) $(bin_BINARIES)
 
 SHELL		= @SHELL@
 
@@ -444,3 +445,18 @@ uninstall-binaries:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
+
+tclAppInit.o:   unix/tclAppInit.c
+	$(COMPILE) -c $(APP_CC_SWITCHES) -DTCLLAUNCHER_FILE="\"$(pkglibdir)/tcllauncher.tcl\"" unix/tclAppInit.c
+
+TCLSH_OBJS = tclAppInit.o
+
+tcllauncher:    ${TCLSH_OBJS} ${TCL_LIB_FILE}
+	${CC} ${CFLAGS} ${LDFLAGS} ${TCLSH_OBJS} ${SHLIB_LD_LIBS} \
+	${CC_SEARCH_FLAGS} ${TCL_LIB_SPEC} -o tcllauncher
+
+TCL_LIB_SPEC=@TCL_LIB_SPEC@
+LIB_RUNTIME_DIR=$(libdir)
+LD_SEARCH_FLAGS=@LD_SEARCH_FLAGS@
+CC_SEARCH_FLAGS=@CC_SEARCH_FLAGS@
+

@@ -154,7 +154,7 @@ Tcl_AppInit(
      * should have the same entry-point name.)
      */
 
-    if (Tcl_PkgRequire (interp, PACKAGE_NAME, PACKAGE_VERSION, 1) == NULL) {
+    if (0 && Tcl_PkgRequire (interp, PACKAGE_NAME, PACKAGE_VERSION, 1) == NULL) {
         return TCL_ERROR;
     }
 
