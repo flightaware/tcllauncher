@@ -2,4 +2,4 @@
 # configure arguments for FreeBSD machines with standard, ports-installed tcl85
 #
 
-./configure --with-tcl=/usr/local/lib/tcl8.5 --mandir=/usr/local/man
+./configure --with-tcl=/usr/local/lib/tcl8.6 --mandir=/usr/local/man
