@@ -27,26 +27,6 @@
 #define TCL_STORAGE_CLASS DLLEXPORT
 #endif /* BUILD_sample */
 
-#ifdef HAVE_INTTYPES_H
-#   include <inttypes.h>
-typedef uint32_t sha_uint32_t;
-#else
-#   if ((1<<31)<0)
-typedef unsigned long sha_uint32_t;
-#   else
-typedef unsigned int sha_uint32_t;
-#   endif
-#endif
-
-typedef struct {
-    sha_uint32_t state[5];
-    sha_uint32_t count[2];
-    unsigned char buffer[64];
-} SHA1_CTX;
-
-void SHA1Init	(SHA1_CTX* context);
-void SHA1Update	(SHA1_CTX* context, unsigned char* data, unsigned int len);
-void SHA1Final	(SHA1_CTX* context, unsigned char digest[20]);
 
 /*
  * Only the _Init function is exported.
