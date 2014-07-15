@@ -85,7 +85,7 @@ Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
 
 ::tcllauncher::pidfile_open 
 
-    Given an optional path to a directory and optional permissions, 
+    Given an optional path to a filename and optional permissions, 
     pidfile_open opens (or creates) a file specified by the path
     and locks it with TclX's interface to the flock system call.
 
@@ -123,7 +123,7 @@ process holding the lock to examine when the owner process got the lock.
 
 EXAMPLE
 
-    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid 0600]
+    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid" 0600]
     if {$pid > 0} {
 	puts stderr "pid $pid already has the lock"
 	exit 1

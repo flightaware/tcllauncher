@@ -107,10 +107,10 @@ Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
 
 [list_begin definitions]
 [call [cmd ::tcllauncher::pidfile_open] \
-        [opt "[arg path]"] \
+        [opt "[arg filename]"] \
         [opt "[arg mode]"]]
 
-Given an optional path to a directory and optional permissions, 
+Given an optional path to a pid filename and optional permissions, 
 pidfile_open opens (or creates) a file specified by the path
 and locks it with TclX's interface to the [cmd flock] system call.
 
@@ -157,7 +157,7 @@ Close and remove a pidfile.
 [section {EXAMPLE}]
 
 [example_begin]
-    set pid [lb]::tcllauncher::pidfile_open "/var/run/daemon.pid 0600[rb]
+    set pid [lb]::tcllauncher::pidfile_open "/var/run/daemon.pid" 0600[rb]
     if {$pid > 0} {
 	puts stderr "pid $pid already has the lock"
 	exit 1
