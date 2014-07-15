@@ -243,7 +243,7 @@ Database Class:	\\fB\\$3\\fR
 .SH NAME
 tcllauncher \- Tcl application launcher
 .SH SYNOPSIS
-\fB::tcllauncher::pidfile_open\fR ?\fIpath\fR? ?\fImode\fR?
+\fB::tcllauncher::pidfile_open\fR ?\fIfilename\fR? ?\fImode\fR?
 .sp
 \fB::tcllauncher::pidfile_write\fR
 .sp
@@ -288,20 +288,22 @@ Say, for instance, trackserver.
 .PP
 But then you have to invoke trackserver with arguments and do stuff to
 prep it, like:
-.nf
+.CS
+
 
     cd ...somewhere...
     /usr/local/bin/trackserver main.tcl
 
-.fi
+.CE
 That's the original purpose for tcllauncher, just to make that reasonable.
-.nf
+.CS
+
 
     cp /usr/local/bin/tcllauncher /usr/local/bin/trackserver
 
     trackserver
 
-.fi
+.CE
 How does it find its files?  It cd's to the corresponding lib directory and
 a directory underneath that of the same name as the application, and sources
 "\fImain.tcl\fR" with \fBtcl_interactive\fR set to 0.
@@ -317,21 +319,23 @@ are at when you run it, you're still in that directory.
 .PP
 But a lot of times you want to go to your application directory, so you
 can just
-.nf
+.CS
+
 
 	cd $::launchdir
 
-.fi
+.CE
 Then you can source in all of your various files and stuff like that.
 .SH "PROCESS GROUP"
 If you are going to fork off children, exec them, or whatever, you should
 probably become your own process group so hopefully your children might
 inherit your signals and Do The Right Thing.
-.nf
+.CS
+
 
     id process group set
 
-.fi
+.CE
 The \fBid\fR command is from the TclX extension.
 .SH "PID FILE"
 Lots of apps write a file with the server's process ID in it.  Upon relaunch,
@@ -341,8 +345,8 @@ alive or not, and also to potentially kill it.
 Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
 .PP
 .TP
-\fB::tcllauncher::pidfile_open\fR ?\fIpath\fR? ?\fImode\fR?
-Given an optional path to a directory and optional permissions,
+\fB::tcllauncher::pidfile_open\fR ?\fIfilename\fR? ?\fImode\fR?
+Given an optional path to a pid filename and optional permissions,
 pidfile_open opens (or creates) a file specified by the path
 and locks it with TclX's interface to the \fBflock\fR system call.
 .sp
@@ -374,9 +378,10 @@ a child process.
 Close and remove a pidfile.
 .PP
 .SH EXAMPLE
-.nf
+.CS
 
-    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid 0600]
+
+    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid" 0600]
     if {$pid > 0} {
 	puts stderr "pid $pid already has the lock"
 	exit 1
@@ -391,7 +396,7 @@ Close and remove a pidfile.
     ::tcllauncher::pidfile_remove
     exit
 
-.fi
+.CE
 .SH DAEMONIZE
 Sometimes you want your program to spawn itself off into the background in
 a way that when you logout it doesn't kill the process, etc.
