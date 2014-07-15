@@ -176,11 +176,11 @@ proc pidfile_open {{path ""} {mode 0600}} {
         # failed to lock the file, read it for the pid of the owner
         set pid [read -nonewline $fp]
 
-	# if we can get an integer out of it, return that
-	if {[scan $pid %d pid] > 0} {
-	    close $fp
-	    return $pid
-	}
+		# if we can get an integer out of it, return that
+		if {[scan $pid %d pid] > 0} {
+		    close $fp
+		    return $pid
+		}
     }
 
     # i got the lock
@@ -196,7 +196,7 @@ proc pidfile_open {{path ""} {mode 0600}} {
 }
 
 #
-# pidfile_mtime - return the mtime of the pidfile, returns -1 if 
+# pidfile_mtime - return the mtime of the pidfile, returns -1 if
 #   "file mtime" failed.
 #
 proc pidfile_mtime {} {
@@ -217,9 +217,14 @@ proc pidfile_mtime {} {
 proc pidfile_write {} {
     variable pfh
 
-    pidfile_verify 
+    pidfile_verify
 
     set fp $pfh(fp)
+
+    if {![flock -write -nowait $fp]} {
+		puts stderr "Unable to obtain lock on pidfile for pidfile_write"
+		exit 252
+	}
 
     ftruncate -fileid $fp 0
 
