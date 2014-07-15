@@ -128,7 +128,7 @@ This function does not write your process' PID into the file,
 so it can be used before forking if needed.
 
 [para]
-If path is not specified (empty string), [file /var/run/$::argv0.pid] is used, and if mode is not specified, 0600 is used.
+If path is not specified (empty string), [file /var/run/\$::argv0.pid] is used, and if mode is not specified, 0600 is used.
 
 [call [cmd ::tcllauncher::pidfile_write]]
 
