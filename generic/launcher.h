@@ -32,6 +32,6 @@
  * Only the _Init function is exported.
  */
 
-EXTERN int	Sample_Init(Tcl_Interp * interp);
+EXTERN int	Tcllauncher_Init(Tcl_Interp * interp);
 
 #endif /* _TCLLAUNCHER */

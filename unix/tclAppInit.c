@@ -16,6 +16,7 @@
 
 #include "tcl.h"
 #include <stdlib.h>
+#include "launcher.h"
 
 #define TCL_LOCAL_MAIN_HOOK launcher_main_hook
 
@@ -133,7 +134,7 @@ int
 Tcl_AppInit(interp)
     Tcl_Interp *interp;		/* Interpreter for application. */
 {
-    if (Tcl_Init(interp) == TCL_ERROR) {
+    if ((Tcl_Init)(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
 
@@ -147,6 +148,9 @@ Tcl_AppInit(interp)
      *
      * where "Mod" is the name of the module.
      */
+    if (Tcllauncher_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
 
     /*
      * package require the tcllauncher package so that the helper routines

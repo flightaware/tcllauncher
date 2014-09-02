@@ -27,7 +27,7 @@ AC_INIT([Tcllauncher], [1.4])
 # as well as PKG_LIB_FILE and PKG_STUB_LIB_FILE.
 #--------------------------------------------------------------------
 
-TEA_INIT([3.8])
+TEA_INIT([3.9])
 
 AC_CONFIG_AUX_DIR(tclconfig)
 
@@ -73,7 +73,7 @@ TEA_SETUP_COMPILER
 
 TEA_ADD_SOURCES([launcher.c tcllauncher.c])
 TEA_ADD_HEADERS([])
-TEA_ADD_INCLUDES([])
+TEA_ADD_INCLUDES([-I${srcdir}/generic])
 TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
