@@ -145,7 +145,7 @@ proc pidfile_read {path _pid} {
 }
 
 #
-# pidfile_open - given an optional path to a directory and optional permissions,
+# pidfile_open - given an optional path to a file and optional permissions,
 #  open the file, try to lock it, get its contents.  Return the pid contained
 #  therein if there is one and the lock failed.  (Somebody's already got the
 #  pid.)
