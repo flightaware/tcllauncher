@@ -194,6 +194,7 @@ TEA_PROG_DTPLITE
 AC_SUBST(LIB_RUNTIME_DIR)
 AC_SUBST(LD_SEARCH_FLAGS)
 AC_SUBST(CC_SEARCH_FLAGS)
+AC_SUBST(THREADS_LIBS)
 
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the Makefile.
