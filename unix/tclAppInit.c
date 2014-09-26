@@ -42,7 +42,7 @@ int launcher_main_hook _ANSI_ARGS_((int *argcPtr, char ***argvPtr)) {
     int    newArgc = *argcPtr + 1;
     int    i;
 
-    newArgv = (char **)malloc (sizeof(char *) * newArgc);
+    newArgv = malloc (sizeof(char *) * newArgc);
     newArgv[0] = **argvPtr;
     newArgv[1] = TCLLAUNCHER_FILE;
 
