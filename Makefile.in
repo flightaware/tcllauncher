@@ -393,7 +393,7 @@ install-lib-binaries: binaries
 	    fi; \
 	  fi; \
 	done
-	@list='$(PKG_TCL_SOURCES)'; for p in $$list; do \
+	@list='$(PKG_TCL_SOURCES) tcllauncher-support.tcl'; for p in $$list; do \
 	  if test -f $(srcdir)/$$p; then \
 	    destp=`basename $$p`; \
 	    echo " Install $$destp $(DESTDIR)$(pkglibdir)/$$destp"; \

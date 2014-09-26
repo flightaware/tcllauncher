@@ -259,4 +259,4 @@ proc pidfile_remove {} {
 
 } ;# namespace tcllauncher
 
-package provide Tcllauncher 1.4
+package provide @PACKAGE_NAME@ @PACKAGE_VERSION@
