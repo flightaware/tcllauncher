@@ -8,5 +8,6 @@ pkgIndex.tcl
 *.so
 *.dylib
 tcllauncher
+tcllauncher-support.tcl
 libTcllauncher.so*
 .*.swp
