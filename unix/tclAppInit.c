@@ -16,7 +16,6 @@
 
 #include "tcl.h"
 #include <stdlib.h>
-#include "launcher.h"
 
 #define TCL_LOCAL_MAIN_HOOK launcher_main_hook
 
