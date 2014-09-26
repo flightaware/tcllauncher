@@ -71,7 +71,7 @@ TEA_SETUP_COMPILER
 # and PKG_TCL_SOURCES.
 #-----------------------------------------------------------------------
 
-TEA_ADD_SOURCES([tcllauncher.c])
+TEA_ADD_SOURCES([])
 TEA_ADD_HEADERS([])
 TEA_ADD_INCLUDES([-I${srcdir}/generic])
 TEA_ADD_LIBS([])
@@ -169,7 +169,7 @@ AC_DEFINE(USE_TCL_STUBS, 1, [Use Tcl stubs])
 # and TEA_LOAD_TCLCONFIG macros above.
 #--------------------------------------------------------------------
 
-TEA_MAKE_LIB
+#TEA_MAKE_LIB
 
 #--------------------------------------------------------------------
 # Determine the name of the tclsh and/or wish executables in the
