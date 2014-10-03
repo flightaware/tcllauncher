@@ -1,6 +1,6 @@
 [manpage_begin tcllauncher n 1.1]
 [moddesc   {Tcl application launcher for servers}]
-[copyright {2007-2009 FlightAware LLC (BSD Liscense)}]
+[copyright {2007-2014 FlightAware LLC (BSD Liscense)}]
 [titledesc {Tcl application launcher}]
 [description]
 [para]

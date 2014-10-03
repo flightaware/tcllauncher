@@ -1,75 +1,82 @@
 '\"
-'\" Generated from file './doc/tcllauncher.man' by tcllib/doctools with format 'nroff'
-'\" Copyright (c) 2007-2009 FlightAware LLC (BSD Liscense)
+'\" Generated from file 'tcllauncher\&.man' by tcllib/doctools with format 'nroff'
+'\" Copyright (c) 2007-2014 FlightAware LLC (BSD Liscense)
 '\"
-'\" The definitions below are for supplemental macros used in Tcl/Tk
-'\" manual entries.
-'\"
-'\" .AP type name in/out ?indent?
-'\"	Start paragraph describing an argument to a library procedure.
-'\"	type is type of argument (int, etc.), in/out is either "in", "out",
-'\"	or "in/out" to describe whether procedure reads or modifies arg,
-'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
-'\"	needed;  use .AS below instead)
-'\"
-'\" .AS ?type? ?name?
-'\"	Give maximum sizes of arguments for setting tab stops.  Type and
-'\"	name are examples of largest possible arguments that will be passed
-'\"	to .AP later.  If args are omitted, default tab stops are used.
-'\"
-'\" .BS
-'\"	Start box enclosure.  From here until next .BE, everything will be
-'\"	enclosed in one large box.
-'\"
-'\" .BE
-'\"	End of box enclosure.
-'\"
-'\" .CS
-'\"	Begin code excerpt.
-'\"
-'\" .CE
-'\"	End code excerpt.
-'\"
-'\" .VS ?version? ?br?
-'\"	Begin vertical sidebar, for use in marking newly-changed parts
-'\"	of man pages.  The first argument is ignored and used for recording
-'\"	the version when the .VS was added, so that the sidebars can be
-'\"	found and removed when they reach a certain age.  If another argument
-'\"	is present, then a line break is forced before starting the sidebar.
-'\"
-'\" .VE
-'\"	End of vertical sidebar.
-'\"
-'\" .DS
-'\"	Begin an indented unfilled display.
-'\"
-'\" .DE
-'\"	End of indented unfilled display.
-'\"
-'\" .SO
-'\"	Start of list of standard options for a Tk widget.  The
-'\"	options follow on successive lines, in four columns separated
-'\"	by tabs.
-'\"
-'\" .SE
-'\"	End of list of standard options for a Tk widget.
-'\"
-'\" .OP cmdName dbName dbClass
-'\"	Start of description of a specific option.  cmdName gives the
-'\"	option's name as specified in the class command, dbName gives
-'\"	the option's name in the option database, and dbClass gives
-'\"	the option's class in the option database.
-'\"
-'\" .UL arg1 arg2
-'\"	Print arg1 underlined, then print arg2 normally.
-'\"
-'\" RCS: @(#) $Id: man.macros,v 1.1 2009/01/30 04:56:47 andreas_kupries Exp $
-'\"
-'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.TH "tcllauncher" n 1\&.1 tcllauncher "Tcl application launcher for servers"
+.\" The -*- nroff -*- definitions below are for supplemental macros used
+.\" in Tcl/Tk manual entries.
+.\"
+.\" .AP type name in/out ?indent?
+.\"	Start paragraph describing an argument to a library procedure.
+.\"	type is type of argument (int, etc.), in/out is either "in", "out",
+.\"	or "in/out" to describe whether procedure reads or modifies arg,
+.\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+.\"	needed;  use .AS below instead)
+.\"
+.\" .AS ?type? ?name?
+.\"	Give maximum sizes of arguments for setting tab stops.  Type and
+.\"	name are examples of largest possible arguments that will be passed
+.\"	to .AP later.  If args are omitted, default tab stops are used.
+.\"
+.\" .BS
+.\"	Start box enclosure.  From here until next .BE, everything will be
+.\"	enclosed in one large box.
+.\"
+.\" .BE
+.\"	End of box enclosure.
+.\"
+.\" .CS
+.\"	Begin code excerpt.
+.\"
+.\" .CE
+.\"	End code excerpt.
+.\"
+.\" .VS ?version? ?br?
+.\"	Begin vertical sidebar, for use in marking newly-changed parts
+.\"	of man pages.  The first argument is ignored and used for recording
+.\"	the version when the .VS was added, so that the sidebars can be
+.\"	found and removed when they reach a certain age.  If another argument
+.\"	is present, then a line break is forced before starting the sidebar.
+.\"
+.\" .VE
+.\"	End of vertical sidebar.
+.\"
+.\" .DS
+.\"	Begin an indented unfilled display.
+.\"
+.\" .DE
+.\"	End of indented unfilled display.
+.\"
+.\" .SO ?manpage?
+.\"	Start of list of standard options for a Tk widget. The manpage
+.\"	argument defines where to look up the standard options; if
+.\"	omitted, defaults to "options". The options follow on successive
+.\"	lines, in three columns separated by tabs.
+.\"
+.\" .SE
+.\"	End of list of standard options for a Tk widget.
+.\"
+.\" .OP cmdName dbName dbClass
+.\"	Start of description of a specific option.  cmdName gives the
+.\"	option's name as specified in the class command, dbName gives
+.\"	the option's name in the option database, and dbClass gives
+.\"	the option's class in the option database.
+.\"
+.\" .UL arg1 arg2
+.\"	Print arg1 underlined, then print arg2 normally.
+.\"
+.\" .QW arg1 ?arg2?
+.\"	Print arg1 in quotes, then arg2 normally (for trailing punctuation).
+.\"
+.\" .PQ arg1 ?arg2?
+.\"	Print an open parenthesis, arg1 in quotes, then arg2 normally
+.\"	(for trailing punctuation) and then a closing parenthesis.
+.\"
+.\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
 .if t .wh -1.3i ^B
 .nr ^l \n(.l
 .ad b
-'\"	# Start an argument description
+.\"	# Start an argument description
 .de AP
 .ie !"\\$4"" .TP \\$4
 .el \{\
@@ -78,7 +85,7 @@
 .\}
 .ta \\n()Au \\n()Bu
 .ie !"\\$3"" \{\
-\&\\$1	\\fI\\$2\\fP	(\\$3)
+\&\\$1 \\fI\\$2\\fP (\\$3)
 .\".b
 .\}
 .el \{\
@@ -91,7 +98,7 @@
 .\}
 .\}
 ..
-'\"	# define tabbing values for .AP
+.\"	# define tabbing values for .AP
 .de AS
 .nr )A 10n
 .if !"\\$1"" .nr )A \\w'\\$1'u+3n
@@ -101,9 +108,9 @@
 .nr )C \\n()Bu+\\w'(in/out)'u+2n
 ..
 .AS Tcl_Interp Tcl_CreateInterp in/out
-'\"	# BS - start boxed text
-'\"	# ^y = starting y location
-'\"	# ^b = 1
+.\"	# BS - start boxed text
+.\"	# ^y = starting y location
+.\"	# ^b = 1
 .de BS
 .br
 .mk ^y
@@ -113,7 +120,7 @@
 .if n \l'\\n(.lu\(ul'
 .if n .fi
 ..
-'\"	# BE - end boxed text (draw box now)
+.\"	# BE - end boxed text (draw box now)
 .de BE
 .nf
 .ti 0
@@ -133,16 +140,16 @@
 .br
 .nr ^b 0
 ..
-'\"	# VS - start vertical sidebar
-'\"	# ^Y = starting y location
-'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.\"	# VS - start vertical sidebar
+.\"	# ^Y = starting y location
+.\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
 .de VS
 .if !"\\$2"" .br
 .mk ^Y
 .ie n 'mc \s12\(br\s0
 .el .nr ^v 1u
 ..
-'\"	# VE - end of vertical sidebar
+.\"	# VE - end of vertical sidebar
 .de VE
 .ie n 'mc
 .el \{\
@@ -157,9 +164,9 @@
 .\}
 .nr ^v 0
 ..
-'\"	# Special macro to handle page bottom:  finish off current
-'\"	# box/sidebar if in box/sidebar mode, then invoked standard
-'\"	# page bottom macro.
+.\"	# Special macro to handle page bottom:  finish off current
+.\"	# box/sidebar if in box/sidebar mode, then invoked standard
+.\"	# page bottom macro.
 .de ^B
 .ev 2
 'ti 0
@@ -186,34 +193,36 @@
 .mk ^Y
 .\}
 ..
-'\"	# DS - begin display
+.\"	# DS - begin display
 .de DS
 .RS
 .nf
 .sp
 ..
-'\"	# DE - end display
+.\"	# DE - end display
 .de DE
 .fi
 .RE
 .sp
 ..
-'\"	# SO - start of list of standard options
+.\"	# SO - start of list of standard options
 .de SO
+'ie '\\$1'' .ds So \\fBoptions\\fR
+'el .ds So \\fB\\$1\\fR
 .SH "STANDARD OPTIONS"
 .LP
 .nf
-.ta 4c 8c 12c
+.ta 5.5c 11c
 .ft B
 ..
-'\"	# SE - end of list of standard options
+.\"	# SE - end of list of standard options
 .de SE
 .fi
 .ft R
 .LP
-See the \\fBoptions\\fR manual entry for details on the standard options.
+See the \\*(So manual entry for details on the standard options.
 ..
-'\"	# OP - start of full description for a single option
+.\"	# OP - start of full description for a single option
 .de OP
 .LP
 .nf
@@ -224,21 +233,43 @@ Database Class:	\\fB\\$3\\fR
 .fi
 .IP
 ..
-'\"	# CS - begin code excerpt
+.\"	# CS - begin code excerpt
 .de CS
 .RS
 .nf
 .ta .25i .5i .75i 1i
 ..
-'\"	# CE - end code excerpt
+.\"	# CE - end code excerpt
 .de CE
 .fi
 .RE
 ..
+.\"	# UL - underline word
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "tcllauncher" n 1.1 tcllauncher "Tcl application launcher for servers"
+.\"	# QW - apply quotation marks to word
+.de QW
+.ie '\\*(lq'"' ``\\$1''\\$2
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\$2
+..
+.\"	# PQ - apply parens and quotation marks to word
+.de PQ
+.ie '\\*(lq'"' (``\\$1''\\$2)\\$3
+.\"" fix emacs highlighting
+.el (\\*(lq\\$1\\*(rq\\$2)\\$3
+..
+.\"	# QR - quoted range
+.de QR
+.ie '\\*(lq'"' ``\\$1''\\-``\\$2''\\$3
+.\"" fix emacs highlighting
+.el \\*(lq\\$1\\*(rq\\-\\*(lq\\$2\\*(rq\\$3
+..
+.\"	# MT - "empty" string
+.de MT
+.QW ""
+..
 .BS
 .SH NAME
 tcllauncher \- Tcl application launcher
@@ -266,10 +297,10 @@ tcllauncher \- Tcl application launcher
 .PP
 tcllauncher is a way to have Tcl programs run out of /usr/local/bin under
 their own name, be installed in one place with their support files, and
-provides commands to facilitate server-oriented application execution.
+provides commands to facilitate server-oriented application execution\&.
 .PP
 Now you might think, why bother?  I'll just put my script in there and
-do a #! thing to invoke Tcl.
+do a #! thing to invoke Tcl\&.
 .PP
 Well, OK, but this has certain problems:
 .IP \(bu
@@ -278,24 +309,24 @@ All your Tcl programs will show in "ps" as tclsh
 All your Tcl programs will show in "top" as tclsh
 .IP \(bu
 if there are any files you want to pull in that aren't in a package,
-you have to invent your own place to install and locate them.
+you have to invent your own place to install and locate them\&.
 .PP
 .PP
-You'd like to be able to have stuff show up as its script name.
+You'd like to be able to have stuff show up as its script name\&.
 .PP
-You could just copy or even link tclsh to the name of your program.
-Say, for instance, trackserver.
+You could just copy or even link tclsh to the name of your program\&.
+Say, for instance, trackserver\&.
 .PP
 But then you have to invoke trackserver with arguments and do stuff to
 prep it, like:
 .CS
 
 
-    cd ...somewhere...
-    /usr/local/bin/trackserver main.tcl
+    cd \&.\&.\&.somewhere\&.\&.\&.
+    /usr/local/bin/trackserver main\&.tcl
 
 .CE
-That's the original purpose for tcllauncher, just to make that reasonable.
+That's the original purpose for tcllauncher, just to make that reasonable\&.
 .CS
 
 
@@ -306,16 +337,16 @@ That's the original purpose for tcllauncher, just to make that reasonable.
 .CE
 How does it find its files?  It cd's to the corresponding lib directory and
 a directory underneath that of the same name as the application, and sources
-"\fImain.tcl\fR" with \fBtcl_interactive\fR set to 0.
+"\fImain\&.tcl\fR" with \fBtcl_interactive\fR set to 0\&.
 .PP
 So when "\fItcllauncher\fR" is installed as "\fItrackserver\fR" and you run trackserver, what happens "\fI/usr/local/bin/trackserver\fR" starts up like the
-Tcl shell, except that it sources in "\fI/usr/local/lib/trackserver/main.tcl\fR".
+Tcl shell, except that it sources in "\fI/usr/local/lib/trackserver/main\&.tcl\fR"\&.
 Also, a global variable called \fBlaunchdir\fR is set containing the "launch
-directory," i.e. the directory where main.tcl was loaded from.
-( In the above example, "\fI/usr/local/lib/trackserver.\fR")
+directory," i\&.e\&. the directory where main\&.tcl was loaded from\&.
+( In the above example, "\fI/usr/local/lib/trackserver\&.\fR")
 .SH "WHAT DIRECTORY"
 Tcllauncher doesn't change your directory behind your back, so wherever you
-are at when you run it, you're still in that directory.
+are at when you run it, you're still in that directory\&.
 .PP
 But a lot of times you want to go to your application directory, so you
 can just
@@ -325,63 +356,63 @@ can just
 	cd $::launchdir
 
 .CE
-Then you can source in all of your various files and stuff like that.
+Then you can source in all of your various files and stuff like that\&.
 .SH "PROCESS GROUP"
 If you are going to fork off children, exec them, or whatever, you should
 probably become your own process group so hopefully your children might
-inherit your signals and Do The Right Thing.
+inherit your signals and Do The Right Thing\&.
 .CS
 
 
     id process group set
 
 .CE
-The \fBid\fR command is from the TclX extension.
+The \fBid\fR command is from the TclX extension\&.
 .SH "PID FILE"
-Lots of apps write a file with the server's process ID in it.  Upon relaunch,
+Lots of apps write a file with the server's process ID in it\&.  Upon relaunch,
 the program can come along and look in its own pid file to see if it's already
-alive or not, and also to potentially kill it.
+alive or not, and also to potentially kill it\&.
 .PP
-Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library.
+Our pidfile support is a studied Tcl-based copy of BSD's pidfile C library\&.
 .PP
 .TP
 \fB::tcllauncher::pidfile_open\fR ?\fIfilename\fR? ?\fImode\fR?
 Given an optional path to a pid filename and optional permissions,
 pidfile_open opens (or creates) a file specified by the path
-and locks it with TclX's interface to the \fBflock\fR system call.
+and locks it with TclX's interface to the \fBflock\fR system call\&.
 .sp
 If the file cannot be locked, the PID of an already running daemon is
-returned.
-Otherwise zero is returned and you've got the lock. You can now call
-\fBpidfile_write\fR to get your pid into the lock file.
+returned\&.
+Otherwise zero is returned and you've got the lock\&. You can now call
+\fBpidfile_write\fR to get your pid into the lock file\&.
 .sp
 This function does not write your process' PID into the file,
-so it can be used before forking if needed.
+so it can be used before forking if needed\&.
 .sp
-If path is not specified (empty string), "\fI/var/run/$::argv0.pid\fR" is used, and if mode is not specified, 0600 is used.
+If path is not specified (empty string), "\fI/var/run/$::argv0\&.pid\fR" is used, and if mode is not specified, 0600 is used\&.
 .TP
 \fB::tcllauncher::pidfile_write\fR
-Writes your pid into the pid file previously opened by \fBpidfile_open\fR.
+Writes your pid into the pid file previously opened by \fBpidfile_open\fR\&.
 .TP
 \fB::tcllauncher::pidfile_mtime\fR
-Return the mtime of the pidfile.
+Return the mtime of the pidfile\&.
 .sp
 Can be used after a successful or unsuccessful
-call to pidfile_open.  Considered useful after pidfile_open fails due to another
-process holding the lock to examine when the owner process got the lock.
+call to pidfile_open\&.  Considered useful after pidfile_open fails due to another
+process holding the lock to examine when the owner process got the lock\&.
 .TP
 \fB::tcllauncher::pidfile_close\fR
-Close a pidfile.  It should be used after your daemon forks to start
-a child process.
+Close a pidfile\&.  It should be used after your daemon forks to start
+a child process\&.
 .TP
 \fB::tcllauncher::pidfile_remove\fR
-Close and remove a pidfile.
+Close and remove a pidfile\&.
 .PP
 .SH EXAMPLE
 .CS
 
 
-    set pid [::tcllauncher::pidfile_open "/var/run/daemon.pid" 0600]
+    set pid [::tcllauncher::pidfile_open "/var/run/daemon\&.pid" 0600]
     if {$pid > 0} {
 	puts stderr "pid $pid already has the lock"
 	exit 1
@@ -391,7 +422,7 @@ Close and remove a pidfile.
 
     ::tcllauncher::pidfile_write
 
-    ...do work...
+    \&.\&.\&.do work\&.\&.\&.
 
     ::tcllauncher::pidfile_remove
     exit
@@ -399,48 +430,48 @@ Close and remove a pidfile.
 .CE
 .SH DAEMONIZE
 Sometimes you want your program to spawn itself off into the background in
-a way that when you logout it doesn't kill the process, etc.
+a way that when you logout it doesn't kill the process, etc\&.
 To daemonize a tcllauncher app,
 .TP
 \fB::tcllauncher::daemonize\fR ?\fI-noclose\fR? ?\fI-nochdir\fR?
-By default this forks off a child and exits the parent.  In the child, it
+By default this forks off a child and exits the parent\&.  In the child, it
 changes the current directory to "\fI/\fR", and redirects stdin, stdout and
-stderr to/from "\fI/dev/null\fR".
+stderr to/from "\fI/dev/null\fR"\&.
 .sp
 Specifying \fI-noclose\fR prevents the closing and redirecting of stdin,
 stdout and stderr, while \fI-nochdir\fR prevents the changing of the working
 dir to "\fI/\fR"
 .sp
-This is a rough copy of BSD 4.4's \fBdaemon\fR library routine.
+This is a rough copy of BSD 4\&.4's \fBdaemon\fR library routine\&.
 .PP
 .SH "USER AND GROUP ID MANAGEMENT"
 If a program needs to be run as a certain use, it can invoke
 .TP
 \fB::tcllauncher::require_user\fR \fIuserName\fR
 This requires the program to either be run as fred or as root or something
-like that, by a user that has permissions to become fred.
+like that, by a user that has permissions to become fred\&.
 .sp
 If the program is running as user fred or can change the user id (suid) to
-fred, it continues, else it aborts.
+fred, it continues, else it aborts\&.
 .sp
-This means if the superuser invokes the program, it will change user to the correct user.  If the correct user invokes the program, it will correctly do nothing and proceed.  Handy.
+This means if the superuser invokes the program, it will change user to the correct user\&.  If the correct user invokes the program, it will correctly do nothing and proceed\&.  Handy\&.
 .TP
 \fB::tcllauncher::require_group\fR \fIgroupName\fR
 does for groups what require_user does for
-users.
+users\&.
 .TP
 \fB::tcllauncher::require_user_and_group\fR \fIuserName\fR \fIgroupName\fR
-combines changing the group and user into a single procedure.
+combines changing the group and user into a single procedure\&.
 .PP
 .PP
 Note that if you require user first then require group, the process may have
-lost the privileges necessary to change groups after changing users.  Either
+lost the privileges necessary to change groups after changing users\&.  Either
 require the group ID first or use \fB::tcllauncher::require_user_and_group\fR
-to do both.
+to do both\&.
 .SH KEYWORDS
 background, daemon, daemonize, tcllauncher
 .SH COPYRIGHT
 .nf
-Copyright (c) 2007-2009 FlightAware LLC (BSD Liscense)
+Copyright (c) 2007-2014 FlightAware LLC (BSD Liscense)
 
 .fi
