@@ -16,7 +16,6 @@
 
 #include "tcl.h"
 #include <stdlib.h>
-#include "launcher.h"
 
 #define TCL_LOCAL_MAIN_HOOK launcher_main_hook
 
@@ -43,7 +42,7 @@ int launcher_main_hook _ANSI_ARGS_((int *argcPtr, char ***argvPtr)) {
     int    newArgc = *argcPtr + 1;
     int    i;
 
-    newArgv = (char **)malloc (sizeof(char *) * newArgc);
+    newArgv = malloc (sizeof(char *) * newArgc);
     newArgv[0] = **argvPtr;
     newArgv[1] = TCLLAUNCHER_FILE;
 
@@ -138,17 +137,10 @@ Tcl_AppInit(interp)
 	return TCL_ERROR;
     }
 
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
-    if (Tcllauncher_Init(interp) == TCL_ERROR) {
+    if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {
+	return TCL_ERROR;
+    }
+    if (Tcl_PkgRequire(interp, "Tcl", "8.1", 0) == NULL) {
 	return TCL_ERROR;
     }
 

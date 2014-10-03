@@ -19,7 +19,7 @@ dnl	to configure the system for the local environment.
 # so you can encode the package version directly into the source files.
 #-----------------------------------------------------------------------
 
-AC_INIT([Tcllauncher], [1.4])
+AC_INIT([Tcllauncher],[1.5])
 
 #--------------------------------------------------------------------
 # Call TEA_INIT as the first TEA_ macro to set up initial vars.
@@ -71,13 +71,13 @@ TEA_SETUP_COMPILER
 # and PKG_TCL_SOURCES.
 #-----------------------------------------------------------------------
 
-TEA_ADD_SOURCES([tcllauncher.c])
+TEA_ADD_SOURCES([])
 TEA_ADD_HEADERS([])
 TEA_ADD_INCLUDES([-I${srcdir}/generic])
 TEA_ADD_LIBS([])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
-TEA_ADD_TCL_SOURCES([tcllauncher.tcl tcllauncher-support.tcl])
+TEA_ADD_TCL_SOURCES([tcllauncher.tcl])
 
 #--------------------------------------------------------------------
 # __CHANGE__
@@ -95,7 +95,7 @@ TEA_ADD_TCL_SOURCES([tcllauncher.tcl tcllauncher-support.tcl])
 
 # Add pkgIndex.tcl if it is generated in the Makefile instead of ./configure
 # and change Makefile.in to move it from CONFIG_CLEAN_FILES to BINARIES var.
-#CLEANFILES="pkgIndex.tcl"
+CLEANFILES="pkgIndex.tcl tcllauncher-support.tcl"
 if test "${TEA_PLATFORM}" = "windows" ; then
     AC_DEFINE(BUILD_launcher, 1, [Build windows export dll])
     CLEANFILES="$CLEANFILES *.lib *.dll *.exp *.ilk *.pdb vc*.pch"
@@ -169,7 +169,7 @@ AC_DEFINE(USE_TCL_STUBS, 1, [Use Tcl stubs])
 # and TEA_LOAD_TCLCONFIG macros above.
 #--------------------------------------------------------------------
 
-TEA_MAKE_LIB
+#TEA_MAKE_LIB
 
 #--------------------------------------------------------------------
 # Determine the name of the tclsh and/or wish executables in the
@@ -194,6 +194,7 @@ TEA_PROG_DTPLITE
 AC_SUBST(LIB_RUNTIME_DIR)
 AC_SUBST(LD_SEARCH_FLAGS)
 AC_SUBST(CC_SEARCH_FLAGS)
+AC_SUBST(THREADS_LIBS)
 
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the Makefile.
@@ -201,4 +202,5 @@ AC_SUBST(CC_SEARCH_FLAGS)
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
 
-AC_OUTPUT([Makefile pkgIndex.tcl])
+AC_CONFIG_FILES([Makefile pkgIndex.tcl tcllauncher-support.tcl])
+AC_OUTPUT
