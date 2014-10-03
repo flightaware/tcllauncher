@@ -75,7 +75,7 @@ exec_prefix	= @exec_prefix@
 bindir		= @bindir@
 libdir		= @libdir@
 includedir	= @includedir@
-#datarootdir     = @datarootdir@
+datarootdir	= @datarootdir@
 datadir		= @datadir@
 mandir		= @mandir@
 
@@ -88,10 +88,13 @@ pkgincludedir	= $(includedir)/$(PKG_DIR)
 
 top_builddir	= .
 
-INSTALL		= @INSTALL@
-INSTALL_PROGRAM	= @INSTALL_PROGRAM@
+INSTALL_OPTIONS	=
+INSTALL		= @INSTALL@ ${INSTALL_OPTIONS}
+INSTALL_DATA_DIR = @INSTALL_DATA_DIR@
 INSTALL_DATA	= @INSTALL_DATA@
+INSTALL_PROGRAM	= @INSTALL_PROGRAM@
 INSTALL_SCRIPT	= @INSTALL_SCRIPT@
+INSTALL_LIBRARY	= @INSTALL_LIBRARY@
 
 PACKAGE_NAME	= @PACKAGE_NAME@
 PACKAGE_VERSION	= @PACKAGE_VERSION@
@@ -114,6 +117,9 @@ STLIB_LD	= @STLIB_LD@
 #TCL_DEFS	= @TCL_DEFS@
 TCL_BIN_DIR	= @TCL_BIN_DIR@
 TCL_SRC_DIR	= @TCL_SRC_DIR@
+TCL_LIB_SPEC	=@TCL_LIB_SPEC@
+TCL_STUB_LIB_SPEC	=@TCL_STUB_LIB_SPEC@
+THREADS_LIBS	=@THREADS_LIBS@
 #TK_BIN_DIR	= @TK_BIN_DIR@
 #TK_SRC_DIR	= @TK_SRC_DIR@
 
@@ -136,11 +142,11 @@ PKG_ENV		= @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
 		  TCLLIBPATH="$(TCLLIBPATH)"
 
 TCLSH_PROG	= @TCLSH_PROG@
-TCLSH   	= $(PKG_ENV) $(TCLSH_ENV) $(TCLSH_PROG)
+TCLSH		= $(PKG_ENV) $(TCLSH_ENV) $(TCLSH_PROG)
 
 #WISH_ENV	= TK_LIBRARY=`@CYGPATH@ $(TK_SRC_DIR)/library`
 #WISH_PROG	= @WISH_PROG@
-#WISH   	= $(PKG_ENV) $(TCLSH_ENV) $(WISH_ENV) $(WISH_PROG)
+#WISH		= $(PKG_ENV) $(TCLSH_ENV) $(WISH_ENV) $(WISH_PROG)
 
 SHARED_BUILD	= @SHARED_BUILD@
 
@@ -162,10 +168,12 @@ CONFIG_CLEAN_FILES = Makefile pkgIndex.tcl
 CLEANFILES	= @CLEANFILES@
 
 CPPFLAGS	= @CPPFLAGS@
-LIBS		= @PKG_LIBS@ @THREADS_LIBS@ @LIBS@
+LIBS		= @PKG_LIBS@ @LIBS@
 AR		= @AR@
 CFLAGS		= @CFLAGS@
 COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+
+.SUFFIXES: .c .$(OBJEXT)
 
 #========================================================================
 # Start of user-definable TARGETS section
@@ -173,7 +181,7 @@ COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(C
 
 #========================================================================
 # TEA TARGETS.  Please note that the "libraries:" target refers to platform
-# independent files, and the "binaries:" target inclues executable programs and
+# independent files, and the "binaries:" target includes executable programs and
 # platform-dependent libraries.  Modify these targets so that they install
 # the various pieces of your package.  The make and install rules
 # for the BINARIES that you specified above have already been done.
@@ -211,7 +219,7 @@ $(srcdir)/doc/tcllauncher.n:	$(srcdir)/doc/tcllauncher.man
 tcllauncher.html:	$(srcdir)/doc/tcllauncher.man
 	@if [ -n "$(DTPLITE)" -a -x "$(DTPLITE)" ]; then \
 	    echo "Building $@"; \
-	    $(DTPLITE) -o $@ html $(srcdir)/doc/hdp.man ; \
+	    $(DTPLITE) -o $@ html $(srcdir)/doc/tcllauncher.man ; \
 	fi
 
 install: all install-binaries install-libraries install-doc
@@ -224,7 +232,7 @@ install-binaries: binaries install-lib-binaries install-bin-binaries
 #========================================================================
 
 install-libraries: libraries
-	@mkdir -p $(DESTDIR)$(includedir)
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(includedir)
 	@echo "Installing header files in $(DESTDIR)$(includedir)"
 	@list='$(PKG_HEADERS)'; for i in $$list; do \
 	    echo "Installing $(srcdir)/$$i" ; \
@@ -237,16 +245,17 @@ install-libraries: libraries
 #========================================================================
 
 install-doc: doc
-	@mkdir -p $(DESTDIR)$(mandir)/mann
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(mandir)/mann
 	@echo "Installing documentation in $(DESTDIR)$(mandir)"
 	@list='$(srcdir)/doc/*.n'; for i in $$list; do \
 	    echo "Installing $$i"; \
-	    rm -f $(DESTDIR)$(mandir)/mann/`basename $$i`; \
 	    $(INSTALL_DATA) $$i $(DESTDIR)$(mandir)/mann ; \
 	done
 
 test: binaries libraries
-	$(TCLSH) `@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS)
+	$(TCLSH) `@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS) \
+		-load "package ifneeded ${PACKAGE_NAME} ${PACKAGE_VERSION} \
+			[list load `@CYGPATH@ $(PKG_LIB_FILE)` $(PACKAGE_NAME)]"
 
 shell: binaries libraries
 	@$(TCLSH) $(SCRIPT)
@@ -291,7 +300,7 @@ $(PKG_STUB_LIB_FILE): $(PKG_STUB_OBJECTS)
 # As necessary, add $(srcdir):$(srcdir)/compat:....
 #========================================================================
 
-VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win
+VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macosx
 
 .c.@OBJEXT@:
 	$(COMPILE) -c `@CYGPATH@ $<` -o $@
@@ -302,7 +311,7 @@ VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win
 #========================================================================
 
 #COMPRESS	= tar cvf $(PKG_DIR).tar $(PKG_DIR); compress $(PKG_DIR).tar
-COMPRESS	= gtar zcvf $(PKG_DIR).tar.gz $(PKG_DIR)
+COMPRESS	= tar zcvf $(PKG_DIR).tar.gz $(PKG_DIR)
 DIST_ROOT	= /tmp/dist
 DIST_DIR	= $(DIST_ROOT)/$(PKG_DIR)
 
@@ -310,7 +319,7 @@ dist-clean:
 	rm -rf $(DIST_DIR) $(DIST_ROOT)/$(PKG_DIR).tar.*
 
 dist: dist-clean
-	mkdir -p $(DIST_DIR)
+	$(INSTALL_DATA_DIR) $(DIST_DIR)
 	cp -p $(srcdir)/ChangeLog $(srcdir)/README* $(srcdir)/license* \
 		$(srcdir)/aclocal.m4 $(srcdir)/configure $(srcdir)/*.in \
 		$(DIST_DIR)/
@@ -323,7 +332,7 @@ dist: dist-clean
 	    fi; \
 	done;
 
-	mkdir $(DIST_DIR)/tclconfig
+	$(INSTALL_DATA_DIR) $(DIST_DIR)/tclconfig
 	cp $(srcdir)/tclconfig/install-sh $(srcdir)/tclconfig/tcl.m4 \
 		$(DIST_DIR)/tclconfig/
 	chmod 664 $(DIST_DIR)/tclconfig/tcl.m4
@@ -332,7 +341,7 @@ dist: dist-clean
 	list='demos doc generic library mac tests unix win'; \
 	for p in $$list; do \
 	    if test -d $(srcdir)/$$p ; then \
-		mkdir $(DIST_DIR)/$$p; \
+		$(INSTALL_DATA_DIR) $(DIST_DIR)/$$p; \
 		cp -p $(srcdir)/$$p/*.* $(DIST_DIR)/$$p/; \
 	    fi; \
 	done
@@ -348,7 +357,7 @@ dist: dist-clean
 # variable in configure.in
 #========================================================================
 
-clean:  
+clean:
 	-test -z "$(BINARIES)" || rm -f $(BINARIES)
 	-rm -f *.$(OBJEXT) core *.core
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
@@ -370,11 +379,11 @@ distclean: clean
 #========================================================================
 
 install-lib-binaries: binaries
-	@mkdir -p $(DESTDIR)$(pkglibdir)
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(pkglibdir)
 	@list='$(lib_BINARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(pkglibdir)/$$p"; \
-	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(pkglibdir)/$$p; \
+	    echo " $(INSTALL_LIBRARY) $$p $(DESTDIR)$(pkglibdir)/$$p"; \
+	    $(INSTALL_LIBRARY) $$p $(DESTDIR)$(pkglibdir)/$$p; \
 	    stub=`echo $$p|sed -e "s/.*\(stub\).*/\1/"`; \
 	    if test "x$$stub" = "xstub"; then \
 		echo " $(RANLIB_STUB) $(DESTDIR)$(pkglibdir)/$$p"; \
@@ -415,15 +424,13 @@ install-lib-binaries: binaries
 #========================================================================
 
 install-bin-binaries: binaries
-	@mkdir -p $(DESTDIR)$(bindir)
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(bindir)
 	@list='$(bin_BINARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
 	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p"; \
 	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p; \
 	  fi; \
 	done
-
-.SUFFIXES: .c .$(OBJEXT)
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
@@ -448,17 +455,11 @@ uninstall-binaries:
 .NOEXPORT:
 
 tclAppInit.o:	unix/tclAppInit.c
-	$(COMPILE) -c $(APP_CC_SWITCHES) -DTCLLAUNCHER_FILE="\"$(pkglibdir)/tcllauncher.tcl\"" unix/tclAppInit.c
+	$(COMPILE) -c $(APP_CC_SWITCHES) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) \
+	    -DTCLLAUNCHER_FILE="\"$(pkglibdir)/tcllauncher.tcl\"" unix/tclAppInit.c
 
 TCLSH_OBJS = tclAppInit.o
 
-tcllauncher:	$(TCLSH_OBJS) $(TCL_LIB_FILE)
-	$(CC) -o $@ $(TCLSH_OBJS) $(CFLAGS) $(LDFLAGS_DEFAULT) $(PKG_OBJECTS) \
-	$(LIBS) $(TCL_LIB_SPEC) $(TCL_STUB_LIB_SPEC)
-
-TCL_LIB_SPEC=@TCL_LIB_SPEC@
-TCL_STUB_LIB_SPEC=@TCL_STUB_LIB_SPEC@
-LIB_RUNTIME_DIR=$(libdir)
-LD_SEARCH_FLAGS=@LD_SEARCH_FLAGS@
-CC_SEARCH_FLAGS=@CC_SEARCH_FLAGS@
-
+tcllauncher:	$(TCLSH_OBJS)
+	$(CC) -o $@ $(TCLSH_OBJS) $(CFLAGS) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) \
+	    $(TCL_LIB_SPEC) $(TCL_STUB_LIB_SPEC) $(THREADS_LIBS)
