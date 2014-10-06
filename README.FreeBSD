@@ -2,4 +2,4 @@
 # configure arguments for FreeBSD machines with standard, ports-installed tcl86
 #
 
-./configure --with-tcl=/usr/local/lib/tcl8.6 --mandir=/usr/local/man --enable-symbols --disable-threads
+./configure --with-tcl=/usr/local/lib/tcl8.6 --mandir=/usr/local/man
