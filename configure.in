@@ -95,7 +95,7 @@ TEA_ADD_TCL_SOURCES([tcllauncher.tcl])
 
 # Add pkgIndex.tcl if it is generated in the Makefile instead of ./configure
 # and change Makefile.in to move it from CONFIG_CLEAN_FILES to BINARIES var.
-CLEANFILES="pkgIndex.tcl tcllauncher-support.tcl"
+CLEANFILES=""
 if test "${TEA_PLATFORM}" = "windows" ; then
     AC_DEFINE(BUILD_launcher, 1, [Build windows export dll])
     CLEANFILES="$CLEANFILES *.lib *.dll *.exp *.ilk *.pdb vc*.pch"
