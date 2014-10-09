@@ -164,7 +164,7 @@ PKG_CFLAGS	= @PKG_CFLAGS@
 DEFS		= @DEFS@ $(PKG_CFLAGS)
 
 # Move pkgIndex.tcl to 'BINARIES' var if it is generated in the Makefile
-CONFIG_CLEAN_FILES = Makefile pkgIndex.tcl tcllauncher-support.tcl
+CONFIG_CLEAN_FILES = pkgIndex.tcl tcllauncher.tcl Makefile unix/tcllauncher.c
 CLEANFILES	= @CLEANFILES@
 
 CPPFLAGS	= @CPPFLAGS@
@@ -222,7 +222,7 @@ tcllauncher.html:	$(srcdir)/doc/tcllauncher.man
 	    $(DTPLITE) -o $@ html $(srcdir)/doc/tcllauncher.man ; \
 	fi
 
-install: all install-binaries install-libraries install-doc
+install: all install-binaries install-doc
 
 install-binaries: binaries install-lib-binaries install-bin-binaries
 
@@ -251,6 +251,12 @@ install-doc: doc
 	    echo "Installing $$i"; \
 	    $(INSTALL_DATA) $$i $(DESTDIR)$(mandir)/mann ; \
 	done
+
+install-tcl:
+	@$(INSTALL_DATA_DIR) $(DESTDIR)$(pkglibdir)
+	@echo "Installing tcllauncher.tcl in $(DESTDIR)$(pkglibdir)"
+	$(INSTALL_DATA) tcllauncher.tcl $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(pkglibdir)
 
 test: binaries libraries
 	$(TCLSH) `@CYGPATH@ $(srcdir)/tests/all.tcl` $(TESTFLAGS) \
@@ -300,7 +306,7 @@ $(PKG_STUB_LIB_FILE): $(PKG_STUB_OBJECTS)
 # As necessary, add $(srcdir):$(srcdir)/compat:....
 #========================================================================
 
-VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macosx
+VPATH = $(srcdir):$(srcdir)/unix
 
 .c.@OBJEXT@:
 	$(COMPILE) -c `@CYGPATH@ $<` -o $@
@@ -409,10 +415,6 @@ install-lib-binaries: binaries
 	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(pkglibdir)/$$destp; \
 	  fi; \
 	done
-	@if test "x$(SHARED_BUILD)" = "x1"; then \
-	    echo " Install pkgIndex.tcl $(DESTDIR)$(pkglibdir)"; \
-	    $(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(pkglibdir); \
-	fi
 
 #========================================================================
 # Install binary executables (e.g. .exe files and dependent .dll files)
@@ -424,10 +426,10 @@ install-lib-binaries: binaries
 #========================================================================
 
 install-bin-binaries: binaries
+	@echo "Installing tcllauncher in $(DESTDIR)$(bindir)"
 	@$(INSTALL_DATA_DIR) $(DESTDIR)$(bindir)
 	@list='$(bin_BINARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
-	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p"; \
 	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p; \
 	  fi; \
 	done
@@ -454,12 +456,12 @@ uninstall-binaries:
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
 
-tclAppInit.o:	unix/tclAppInit.c
+tcllauncher.o:	unix/tcllauncher.c
 	$(COMPILE) -c $(APP_CC_SWITCHES) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) \
-	    -DTCLLAUNCHER_FILE="\"$(pkglibdir)/tcllauncher.tcl\"" unix/tclAppInit.c
+	    unix/tcllauncher.c
 
-TCLSH_OBJS = tclAppInit.o
+TCLSH_OBJS = tcllauncher.o
 
 tcllauncher:	$(TCLSH_OBJS)
 	$(CC) -o $@ $(TCLSH_OBJS) $(CFLAGS) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) \
-	    $(TCL_LIB_SPEC) $(TCL_STUB_LIB_SPEC) $(THREADS_LIBS)
+	    $(TCL_LIB_SPEC) $(THREADS_LIBS)
