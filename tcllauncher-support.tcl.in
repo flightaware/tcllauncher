@@ -103,6 +103,26 @@ proc daemonize {args} {
 	dup $fp stdout
 	dup $fp stderr
 	close $fp
+    } else {
+	# they set -noclose but let's make sure stdin, stdout and stderr exist and if
+	# they don't, let's gin them up from /dev/null
+	set stdHandles [file channels std*]
+	    foreach handle [list stdin stdout stderr] {
+	    # if the handle doesn't exist...
+	    if {[lsearch $stdHandles $handle] < 0} {
+		# if we don't have a handle to /dev/null, get one
+		if {![info exists fp]} {
+		    set fp [open /dev/null RDWR]
+		}
+		# dup our /dev/null handle to the missing stdio handle
+		dup $fp $handle
+	    }
+	}
+
+	# if we made a handle to /dev/null, close it
+	if {[info exists fp]} {
+	    close $fp
+	}
     }
 
     return
@@ -260,3 +280,5 @@ proc pidfile_remove {} {
 } ;# namespace tcllauncher
 
 package provide @PACKAGE_NAME@ @PACKAGE_VERSION@
+
+# vim: set ts=8 sw=4 sts=4 noet :
