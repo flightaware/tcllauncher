@@ -98,31 +98,35 @@ proc daemonize {args} {
     }
 
     if {$doClose} {
+	# they didn't say -noclose so close stdin, stdout, stderr and
+	# repoint to /dev/null
         set fp [open /dev/null RDWR]
 	dup $fp stdin
 	dup $fp stdout
 	dup $fp stderr
 	close $fp
     } else {
-	# they set -noclose but let's make sure stdin, stdout and stderr exist and if
-	# they don't, let's gin them up from /dev/null
+	# they set -noclose but let's make sure stdin, stdout and stderr
+	# exist and if they don't, let's gin them up from /dev/null
+	if {[llength [file channels std*]] == 3} {
+	    # they all exist, we're good
+	    return
+	}
+
+	set fp [open /dev/null RDWR]
+	# regenerate the list of standard handles because the fp file we
+	# just opened will have become one of them by opening it
 	set stdHandles [file channels std*]
-	    foreach handle [list stdin stdout stderr] {
-	    # if the handle doesn't exist...
+
+	# for all the stdio handles that don't have some kind of file
+	# or socket or device associated with them, associate /dev/null
+	foreach handle [list stdin stdout stderr] {
+	# if the handle doesn't exist...
 	    if {[lsearch $stdHandles $handle] < 0} {
-		# if we don't have a handle to /dev/null, get one
-		if {![info exists fp]} {
-		    set fp [open /dev/null RDWR]
-		}
-		# dup our /dev/null handle to the missing stdio handle
 		dup $fp $handle
 	    }
 	}
-
-	# if we made a handle to /dev/null, close it
-	if {[info exists fp]} {
-	    close $fp
-	}
+	close $fp
     }
 
     return
