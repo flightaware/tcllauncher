@@ -7,6 +7,8 @@ pkgIndex.tcl
 *.so
 *.dylib
 tcllauncher
+tcllauncher.tcl
 tcllauncher-support.tcl
 libTcllauncher.so*
+unix/tcllauncher.c
 .*.swp

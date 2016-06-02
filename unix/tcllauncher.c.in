@@ -1,0 +1,128 @@
+#include "tcl.h"
+#include <string.h>
+#include <sys/stat.h>
+
+static const char support_script[] = "@SUPPORT_SCRIPT@";
+
+Tcl_Obj *
+find_app_script(Tcl_Interp * interp, char * argv0)
+{
+    /* Resolve the name of the script (argv0) into its normalized form. Make
+     * sure the resulting path is stat'able. Extract the file name (last
+     * component) and assert it's not "tcllauncher". If everything is fine up
+     * to this point, locate the application script by following these two
+     * simple rules:
+     *
+     * - if the executable is in a directory called "bin", change bin into
+     *   "lib" and append main.tcl to the final path:
+     *       /usr/bin/myapp --> /usr/lib/myapp/main.tcl
+     *
+     * - otherwise, append .tcl to the executable name:
+     *       /myapp/main --> /myapp/main.tcl
+     */
+
+    int nofComp = 0;
+    Tcl_Obj *result    = NULL;
+    Tcl_Obj *argvPath  = NULL;
+    Tcl_Obj *normPath  = NULL;
+    Tcl_Obj *listPath  = NULL;
+    Tcl_Obj *launchDir = NULL;
+    Tcl_StatBuf stat;
+    
+    /* Get the normalized path */
+    argvPath = Tcl_NewStringObj(argv0, -1);
+    Tcl_IncrRefCount(argvPath);
+    if ((normPath = Tcl_FSGetNormalizedPath(interp, argvPath)) == NULL) {
+        Tcl_SetObjResult(interp, Tcl_ObjPrintf("Invalid path: %s", argv0));
+        goto end;
+    }
+
+    /* Stat the file */
+    if (Tcl_FSStat(normPath, &stat) != 0) {
+        Tcl_SetObjResult(interp, Tcl_ObjPrintf("Cannot stat %s", Tcl_GetString(normPath)));
+        goto end;
+    }
+    listPath = Tcl_FSSplitPath(normPath, &nofComp);
+
+    /* Make sure we're not being called as "tcllauncher" */
+    Tcl_Obj *exeName;
+    Tcl_ListObjIndex(interp, listPath, nofComp-1, &exeName);
+    if (!strcmp(Tcl_GetStringFromObj(exeName, NULL), "tcllauncher")) {
+        Tcl_SetObjResult(interp, 
+                Tcl_NewStringObj("tcllauncher cannot be invoked as \"tcllauncher\"; \
+                                  it must be copied or linked as some other name", -1));
+        goto end;
+    }
+
+    /* Locate the startup script */
+    Tcl_Obj *scriptDir;
+    Tcl_ListObjIndex(interp, listPath, nofComp-2, &scriptDir);
+    if (scriptDir && !strcmp(Tcl_GetStringFromObj(scriptDir, NULL), "bin")) {
+        Tcl_Obj *libComp = Tcl_NewStringObj("lib", -1);
+        Tcl_ListObjReplace(interp, listPath, nofComp-2, 1, 1, &libComp);
+        launchDir = Tcl_FSJoinPath(listPath, -1);
+        Tcl_ListObjAppendElement(interp, listPath, Tcl_NewStringObj("main.tcl", -1));
+        result = Tcl_FSJoinPath(listPath, -1);
+    } else {
+        result = Tcl_FSJoinPath(listPath, -1);
+        launchDir = Tcl_DuplicateObj(result);
+        Tcl_AppendToObj(result, ".tcl", -1);
+    }
+
+    /* Set a couple of variables that might be used by the startup script */
+    Tcl_SetVar2Ex(interp, "argv0", NULL, exeName, TCL_GLOBAL_ONLY);
+    Tcl_SetVar2Ex(interp, "launchdir", NULL, launchDir, TCL_GLOBAL_ONLY);
+
+    Tcl_IncrRefCount(result);
+
+end:
+    Tcl_DecrRefCount(argvPath);
+    return result;
+}
+
+int
+main(int argc, char **argv)
+{
+    Tcl_Interp *interp = Tcl_CreateInterp();
+    if (interp == NULL) {
+        fprintf(stderr, "Cannot create interp\n");
+        return 1;
+    }
+
+    if (Tcl_Init(interp) == TCL_ERROR) {
+        goto die;
+    }
+
+    if (Tcl_PkgRequire(interp, "Tcl", "8.1", 0) == NULL) {
+        goto die;
+    }
+
+    if (Tcl_PkgProvide (interp, "@PACKAGE_NAME@", "@PACKAGE_VERSION@") == TCL_ERROR) {
+        goto die;
+    }
+
+    /* Eval the support script */
+    if (Tcl_EvalEx(interp, support_script, sizeof(support_script), TCL_EVAL_GLOBAL) == TCL_ERROR) {
+        goto die;
+    }
+
+    /* Locate the application's startup file */
+    Tcl_Obj * app_script = find_app_script(interp, argv[0]);
+    if (app_script == NULL) {
+        goto die;
+    }
+
+    /* Eval the startup file */
+    if (Tcl_FSEvalFile(interp, app_script) == TCL_ERROR) {
+        goto die;
+    }
+
+    Tcl_DecrRefCount(app_script);
+    Tcl_DeleteInterp(interp);
+
+    return 0;
+
+die:
+    fprintf(stderr, "%s\n", Tcl_GetStringResult(interp));
+    return 1;
+}
