@@ -2,4 +2,5 @@
 # configure arguments for FreeBSD machines with standard, ports-installed tcl86
 #
 
+autoconf
 ./configure --with-tcl=/usr/local/lib/tcl8.6 --mandir=/usr/local/man
