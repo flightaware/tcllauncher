@@ -123,6 +123,15 @@ THREADS_LIBS	=@THREADS_LIBS@
 #TK_BIN_DIR	= @TK_BIN_DIR@
 #TK_SRC_DIR	= @TK_SRC_DIR@
 
+# Additional search flags needed to find the various shared libraries at
+# run-time. The first symbol is for use when creating a binary with cc, and
+# the second is for use when running ld directly.
+CC_SEARCH_FLAGS = @CC_SEARCH_FLAGS@
+LD_SEARCH_FLAGS = @LD_SEARCH_FLAGS@
+
+# Path to use at runtime to refer to LIB_INSTALL_DIR:
+LIB_RUNTIME_DIR     = $(libdir)
+
 # Not used, but retained for reference of what libs Tcl required
 #TCL_LIBS	= @TCL_LIBS@
 
@@ -462,4 +471,4 @@ TCLSH_OBJS = tclAppInit.o
 
 tcllauncher:	$(TCLSH_OBJS)
 	$(CC) -o $@ $(TCLSH_OBJS) $(CFLAGS) $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) \
-	    $(TCL_LIB_SPEC) $(TCL_STUB_LIB_SPEC) $(THREADS_LIBS)
+	    $(TCL_LIB_SPEC) $(TCL_STUB_LIB_SPEC) $(THREADS_LIBS) $(CC_SEARCH_FLAGS)
