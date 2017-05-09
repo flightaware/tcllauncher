@@ -17,6 +17,10 @@
 #include "tcl.h"
 #include <stdlib.h>
 
+#ifdef HAVE_SETPROCTITLE_INIT
+#include <bsd/unistd.h>
+#endif
+
 #define TCL_LOCAL_MAIN_HOOK launcher_main_hook
 
 
@@ -79,6 +83,14 @@ main(argc, argv)
     int argc;			/* Number of command-line arguments. */
     char **argv;		/* Values of command-line arguments. */
 {
+#ifdef HAVE_SETPROCTITLE_INIT
+	/*
+	 * On linux for libbsd we have to call setproctitle_init to setup the library.
+	 */
+	extern char **environ;
+	setproctitle_init(argc, argv, environ);
+#endif
+
     /*
      * The following #if block allows you to change the AppInit
      * function by using a #define of TCL_LOCAL_APPINIT instead
