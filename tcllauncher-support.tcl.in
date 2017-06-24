@@ -2,6 +2,10 @@
 # tcllauncher-support.tcl - support and standalone routines for tcllauncher
 #
 
+#
+# NB if editing file file make sure you edit tcllauncher-support.tcl.in
+#
+
 package require Tclx
 
 namespace eval ::tcllauncher {
@@ -139,14 +143,14 @@ proc pidfile_verify {} {
     variable pfh
 
     if {[catch {fstat $pfh(fp)} stat] == 1} {
-        error "programming error"
+        error "programming error: $stat"
     }
 
     set dev [keylget stat dev]
     set ino [keylget stat ino]
 
     if {$dev != $pfh(dev) || $ino != $pfh(ino)} {
-        error "programming error"
+        error "programming error: pidfile dev $dev ino $ino doesn't match prior dev $pfh(dev) ino $pfh(ino)"
     }
 
     return 0
@@ -246,9 +250,9 @@ proc pidfile_write {} {
     set fp $pfh(fp)
 
     if {![flock -write -nowait $fp]} {
-		puts stderr "Unable to obtain lock on pidfile for pidfile_write"
-		exit 252
-	}
+	puts stderr "Unable to obtain lock on pidfile '$pfh(path)' for pidfile_write"
+	exit 252
+    }
 
     ftruncate -fileid $fp 0
 
