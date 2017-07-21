@@ -200,6 +200,21 @@ AC_SUBST(THREADS_LIBS)
 AC_SEARCH_LIBS([setproctitle_init], [bsd], [], [])
 AC_CHECK_FUNCS(setproctitle_init)
 
+AC_MSG_CHECKING([if swiftc linker is requested])
+AC_ARG_ENABLE(swiftc-linker,
+	AC_HELP_STRING([--enable-swiftc-linker], [use swiftc for linker (default: no)]),
+	[swiftlinker=$enableval], [swiftlinker=no])
+AC_MSG_RESULT([$swiftlinker])
+
+# Change linker arguments for rpath 
+if test "${swiftlinker}" = "yes" ; then
+    AC_SUBST(LINK_CC, ["swiftc -emit-executable"])
+    CC_SEARCH_FLAGS='-Xlinker -rpath=${LIB_RUNTIME_DIR}'
+else
+    AC_SUBST(LINK_CC, [$CC])
+fi
+AC_SUBST(CC_SEARCH_FLAGS)
+
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the Makefile.
 # You may alternatively have a special pkgIndex.tcl.in or other files
