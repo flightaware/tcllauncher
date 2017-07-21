@@ -620,6 +620,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+LINK_CC
 THREADS_LIBS
 CC_SEARCH_FLAGS
 LD_SEARCH_FLAGS
@@ -739,6 +740,7 @@ enable_rpath
 enable_wince
 with_celib
 enable_symbols
+enable_swiftc_linker
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1365,6 +1367,7 @@ Optional Features:
   --disable-rpath         disable rpath support (default: on)
   --enable-wince          enable Win/CE support (where applicable)
   --enable-symbols        build with debugging symbols (default: off)
+  --enable-swiftc-linker  use swiftc for linker (default: no)
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -8591,6 +8594,98 @@ fi
 
 
 
+
+
+# On Linux look for setproctitle support in libbsd
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing setproctitle_init" >&5
+$as_echo_n "checking for library containing setproctitle_init... " >&6; }
+if ${ac_cv_search_setproctitle_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char setproctitle_init ();
+int
+main ()
+{
+return setproctitle_init ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' bsd; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_setproctitle_init=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_setproctitle_init+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_setproctitle_init+:} false; then :
+
+else
+  ac_cv_search_setproctitle_init=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_setproctitle_init" >&5
+$as_echo "$ac_cv_search_setproctitle_init" >&6; }
+ac_res=$ac_cv_search_setproctitle_init
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+for ac_func in setproctitle_init
+do :
+  ac_fn_c_check_func "$LINENO" "setproctitle_init" "ac_cv_func_setproctitle_init"
+if test "x$ac_cv_func_setproctitle_init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SETPROCTITLE_INIT 1
+_ACEOF
+
+fi
+done
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if swiftc linker is requested" >&5
+$as_echo_n "checking if swiftc linker is requested... " >&6; }
+# Check whether --enable-swiftc-linker was given.
+if test "${enable_swiftc_linker+set}" = set; then :
+  enableval=$enable_swiftc_linker; swiftlinker=$enableval
+else
+  swiftlinker=no
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $swiftlinker" >&5
+$as_echo "$swiftlinker" >&6; }
+
+# Change linker arguments for rpath
+if test "${swiftlinker}" = "yes" ; then
+    LINK_CC="swiftc -emit-executable"
+
+    CC_SEARCH_FLAGS='-Xlinker -rpath=${LIB_RUNTIME_DIR}'
+else
+    LINK_CC=$CC
+
+fi
 
 
 #--------------------------------------------------------------------
