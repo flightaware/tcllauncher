@@ -3,4 +3,4 @@
 #
 # --enable-symbols
 #
-./configure --with-tcl=/usr/lib/tcl8.5
+./configure --with-tcl=/usr/lib/tcl8.6
