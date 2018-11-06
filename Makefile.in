@@ -133,8 +133,8 @@ LD_SEARCH_FLAGS = @LD_SEARCH_FLAGS@
 # Path to use at runtime to refer to LIB_INSTALL_DIR:
 LIB_RUNTIME_DIR     = $(libdir)
 
-# Not used, but retained for reference of what libs Tcl required
-#TCL_LIBS	= @TCL_LIBS@
+# Tcl8.7 actually requires specific libraries
+TCL_LIBS	= @TCL_LIBS@
 
 #========================================================================
 # TCLLIBPATH seeds the auto_path in Tcl's init.tcl so we can test our
