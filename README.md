@@ -1,3 +1,5 @@
+[![Linux CI](https://github.com/flightaware/tcllauncher/actions/workflows/linux-ci.yml/badge.svg)](https://github.com/flightaware/tcllauncher/actions/workflows/linux-ci.yml)
+[![Mac CI](https://github.com/flightaware/tcllauncher/actions/workflows/mac-ci.yaml/badge.svg)](https://github.com/flightaware/tcllauncher/actions/workflows/mac-ci.yaml)
 # tcllauncher, a launcher program for Tcl applications.
 
 tcllauncher is a way to have Tcl programs run out of /usr/local/bin under their own name, be installed in one place with their support files, and provides commands to facilitate server-oriented application execution.
