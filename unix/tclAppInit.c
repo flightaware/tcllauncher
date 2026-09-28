@@ -79,9 +79,8 @@ int launcher_main_hook (int *argcPtr, char ***argvPtr) {
  */
 
 int
-main(argc, argv)
-    int argc;			/* Number of command-line arguments. */
-    char **argv;		/* Values of command-line arguments. */
+main(int argc,
+     char **argv)
 {
 #ifdef HAVE_SETPROCTITLE_INIT
 	/*
@@ -142,8 +141,7 @@ main(argc, argv)
  */
 
 int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
+Tcl_AppInit(Tcl_Interp *interp)
 {
     if ((Tcl_Init)(interp) == TCL_ERROR) {
 	return TCL_ERROR;
