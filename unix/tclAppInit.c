@@ -120,6 +120,16 @@ main(int argc,
 
     return 0;			/* Needed only to prevent compiler warning. */
 }
+
+#if TCL_MAJOR_VERSION == 8
+# define REQUIRED_VERSION "8.1"
+#else
+# if TCL_MAJOR_VERSION == 9
+#  define REQUIRED_VERSION "9.0"
+# else
+#  define REQUIRED_VERSION TCL_VERSION
+# endif
+#endif
 
 /*
  *----------------------------------------------------------------------
@@ -147,10 +157,10 @@ Tcl_AppInit(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
 
-    if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {
+    if (Tcl_InitStubs(interp, "8.1-", 0) == NULL) {
 	return TCL_ERROR;
     }
-    if (Tcl_PkgRequire(interp, "Tcl", "8.1", 0) == NULL) {
+    if (Tcl_PkgRequire(interp, "Tcl", REQUIRED_VERSION, 0) == NULL) {
 	return TCL_ERROR;
     }
 
