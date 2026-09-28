@@ -1,4 +1,4 @@
-name: Mac tcl8 build and install
+name: Mac tcl9 build and install
 
 on:
   push:
