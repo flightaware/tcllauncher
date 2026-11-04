@@ -79,9 +79,8 @@ int launcher_main_hook (int *argcPtr, char ***argvPtr) {
  */
 
 int
-main(argc, argv)
-    int argc;			/* Number of command-line arguments. */
-    char **argv;		/* Values of command-line arguments. */
+main(int argc,
+     char **argv)
 {
 #ifdef HAVE_SETPROCTITLE_INIT
 	/*
@@ -121,6 +120,16 @@ main(argc, argv)
 
     return 0;			/* Needed only to prevent compiler warning. */
 }
+
+#if TCL_MAJOR_VERSION == 8
+# define REQUIRED_VERSION "8.1"
+#else
+# if TCL_MAJOR_VERSION == 9
+#  define REQUIRED_VERSION "9.0"
+# else
+#  define REQUIRED_VERSION TCL_VERSION
+# endif
+#endif
 
 /*
  *----------------------------------------------------------------------
@@ -142,17 +151,16 @@ main(argc, argv)
  */
 
 int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
+Tcl_AppInit(Tcl_Interp *interp)
 {
     if ((Tcl_Init)(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
 
-    if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {
+    if (Tcl_InitStubs(interp, "8.1-", 0) == NULL) {
 	return TCL_ERROR;
     }
-    if (Tcl_PkgRequire(interp, "Tcl", "8.1", 0) == NULL) {
+    if (Tcl_PkgRequire(interp, "Tcl", REQUIRED_VERSION, 0) == NULL) {
 	return TCL_ERROR;
     }
 
